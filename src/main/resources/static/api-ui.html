@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SDK 在线文档</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./sdk/imgs/favicon.ico" media="screen">
+    <link rel="stylesheet" href="./doc/js/malihu/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="./doc/css/api-ui.css">
+    <link rel="stylesheet" href="./doc/css/SyntaxHighlighter/SyntaxHighlighter.css"/>
+    <style>
+        pre {
+            outline: 1px solid #F8F8F8;
+            padding: 5px;
+            margin: 5px;
+            font-size: 1rem;
+            font-family: sans-serif;
+        }
+
+        .string {
+            color: #3AB54A;
+        }
+
+        .number {
+            color: #25AAE7;
+        }
+
+        .boolean {
+            color: #FA8280;
+        }
+
+        .null {
+            color: #F3592A;
+        }
+
+        .key {
+            color: #9227AC;
+        }
+
+        .dp-highlighter {
+            font-family: "Consolas", "Courier New", Courier, mono, serif;
+            font-size: 12px;
+            background-color: #E7E5DC;
+            width: 99%;
+            overflow: auto;
+            margin: 5px 0 18px 0 !important;
+            padding-top: 1px;
+        }
+
+        #log {
+            position: relative;
+            padding-left: 56px;
+            line-height: 24px;
+            font-size: .9rem;
+            color: #7a7a7a;
+        }
+
+        #log:before {
+            content: "";
+            background: #e2e2e2;
+            height: 100%;
+            top: 0;
+            left: 33px;
+            width: 1px;
+            position: absolute;
+        }
+
+        #log:after {
+            height: 30px;
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        #log h5 {
+            font-weight: bold;
+            font-size: 16px;
+            /* padding-top: 18px; */
+            line-height: 50px;
+            position: relative;
+        }
+
+        #log h5:before {
+            content: "";
+            width: 11px;
+            height: 11px;
+            background: #e2e2e2;
+            border-radius: 11px;
+            position: absolute;
+            left: -32px;
+            top: 16px;
+            border: 4px solid #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="sdk-body">
+    <div class="left">
+        <div class="top">
+            <img src="sdk/imgs/logo.png"/>
+        </div>
+        <div class="content">
+            <div class="search">
+                <input type="text" id="search" maxlength="12">
+                <i class="tx-icon-search"></i>
+            </div>
+            <div class="menu">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div class="top">
+            <a href="sdk-ui.html"><img class="home" src="sdk/imgs/home.png"/></a>
+            <span>SDK 接口文档</span>&nbsp;
+            <span class="small-title"></span>
+            <span class="version">版本：<strong></strong></span>
+        </div>
+        <div class="content">
+            <div class="tx-fluid">
+                <div class="content-body">
+                    <div class="display-none">
+                        <span>接口说明</span>
+                        <div class="headline"></div>
+                        <div class="alert-warning description">
+
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>API地址</span>
+                        <div class="headline"></div>
+                        <div class="url">
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>是否需要登录</span>
+                        <div class="headline"></div>
+                        <div class="islogin"></div>
+                    </div>
+                    <div class="display-none">
+                        <span>请求字段说明</span>
+                        <div class="headline"></div>
+                        <div class="params">
+
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>响应字段说明</span>
+                        <div class="headline"></div>
+                        <div class="response">
+
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>响应成功示例</span>
+                        <div class="headline"></div>
+                        <div class="response-success">
+                            <pre id="success-result">
+
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>响应失败示例</span>
+                        <div class="headline"></div>
+                        <div class="response-fail">
+                            <pre id="fail-result">
+
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>响应接受类型</span>
+                        <div class="headline"></div>
+                        <div class="produces"></div>
+                    </div>
+                    <div class="display-none">
+                        <span>响应状态码</span>
+                        <div class="headline"></div>
+                        <div class="responses">
+
+                        </div>
+                    </div>
+                    <div class="display-none">
+                        <span>示例代码</span>
+                        <div class="headline"></div>
+                        <div class="samplecode">
+                            <signs>
+                                <sign class="sign-selected" tag="javascript">javascript</sign>
+                                <!--<sign tag="java">java</sign>
+                                <sign tag="csharp">c-sharp</sign>-->
+                            </signs>
+                            <pre name="code" class="java" id="samplecode">
+
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="log-update">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./doc/js/jquery-2.2.3.min.js"></script>
+<script src="./doc/js/jquery-migrate-1.2.1.js"></script>
+<script src="./doc/js/malihu/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="./doc/js/SyntaxHighlighter/shCore.js"></script>
+<script src="./doc/js/SyntaxHighlighter/shBrushJava.js"></script>
+<script src="./doc/js/SyntaxHighlighter/shBrushJScript.js"></script>
+<script src="./doc/js/SyntaxHighlighter/shBrushCSharp.js"></script>
+<script src="./doc/js/util.js"></script>
+<script src="./doc/js/api-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "info": {
+    "title": "标题",
+    "version": "版本号",
+    "description": "描述"
+  },
+  "tabs": [
+    {
+      "tab": "名称",
+      "description": "",
+      "paths": [
+        {
+          "url": "URL",
+          "name": "中文名称 （默认取方法名）",
+          "description":"description 接口说明",
+          "method": "",
+          "produces": [
+            "application/json",
+            "*/*"
+          ],
+          "islogin": false,
+          "responses": [
+            {
+              "code": 200,
+              "msg": "成功",
+              "description": "描述"
+            }
+          ],
+          "response": {
+            "success": {
+              "id": "",
+              "name": ""
+            },
+            "fail": {
+              "code": "",
+              "msg": ""
+            },
+            "info": [
+              {
+                "field": "",
+                "type": "",
+                "description": ""
+              }
+            ]
+          },
+          "parameters": [
+            {
+              "name": "参数名",
+              "description": "描述",
+              "paramtype": "传参方式 get post header path",
+              "dataType": "参数类型",
+              "required": false
+            }
+          ],
+          "samplecode": "示例代码"
+        }
+      ]
+    }
+  ]
+}

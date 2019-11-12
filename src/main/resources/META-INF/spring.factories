@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.ikangxu.boot.apidoc.common.RequestHandlerProvider
