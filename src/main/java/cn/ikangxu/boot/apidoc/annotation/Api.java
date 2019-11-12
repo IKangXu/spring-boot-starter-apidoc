@@ -7,12 +7,11 @@ package cn.ikangxu.boot.apidoc.annotation;
 import java.lang.annotation.*;
 
 /**
- *
- * @className Api
- * @description 
  * @author kangxu [xukang@engine3d.com]
- * @date 2019/11/8 10:38
  * @version v1.0
+ * @className Api
+ * @description
+ * @date 2019/11/8 10:38
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -25,4 +24,7 @@ public @interface Api {
     String description() default "";
 
     int sort();
+
+    // 分组
+    String group() default "default";
 }

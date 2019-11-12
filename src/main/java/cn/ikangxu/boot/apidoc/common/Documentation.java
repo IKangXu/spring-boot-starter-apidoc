@@ -9,8 +9,8 @@ import cn.ikangxu.boot.apidoc.common.entity.Tab;
 import com.google.common.collect.Multimap;
 import lombok.Data;
 
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -31,6 +31,6 @@ public class Documentation {
     private boolean isDebuger;
 
 
-    private List<Tab> tabs;
+    private Collection<Tab> tabs = new ArrayList<>();
 
 }

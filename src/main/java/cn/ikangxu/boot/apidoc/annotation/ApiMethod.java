@@ -31,16 +31,13 @@ public @interface ApiMethod {
     Class<?> response() default Void.class;
 
     // 是否需要登录
-    boolean isLogin() default false;
+    // boolean isLogin() default false;
 
     // 参数中是否包含文件
-    boolean isParamContainsFile() default false;
+    // boolean isParamContainsFile() default false;
 
     String description() default "";
 
     // 是否废弃使用
     boolean discarded() default false;
-
-    // 分类
-    String[] tags() default {};
 }

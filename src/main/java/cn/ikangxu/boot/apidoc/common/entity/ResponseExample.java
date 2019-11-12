@@ -7,12 +7,11 @@ package cn.ikangxu.boot.apidoc.common.entity;
 import lombok.Data;
 
 /**
- *
- * @className ResponseExample
- * @description 
  * @author kangxu [xukang@engine3d.com]
- * @date 2019/11/11 13:23
  * @version v1.0
+ * @className ResponseExample
+ * @description
+ * @date 2019/11/11 13:23
  */
 @Data
 public class ResponseExample {
@@ -20,4 +19,7 @@ public class ResponseExample {
     private Object success;
     // 失败示例
     private Object fail;
+
+    // 字段信息
+    private Object info;
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @Data
 @Builder
 public class Docket {
-    private String groupName;
+    private String groupName = "default";
     private DocInfo docInfo;
     // 是否启用文档
     private boolean enabled;

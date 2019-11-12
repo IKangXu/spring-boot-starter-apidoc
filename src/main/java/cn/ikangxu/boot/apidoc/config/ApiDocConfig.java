@@ -8,6 +8,9 @@ import cn.ikangxu.boot.apidoc.annotation.*;
 import cn.ikangxu.boot.apidoc.common.Documentation;
 import cn.ikangxu.boot.apidoc.common.RequestHandler;
 import cn.ikangxu.boot.apidoc.common.entity.*;
+import cn.ikangxu.boot.apidoc.util.ListUtils;
+import cn.ikangxu.boot.apidoc.util.MapUtils;
+import cn.ikangxu.boot.apidoc.util.ObjectUtils;
 import cn.ikangxu.boot.apidoc.util.SpringContextUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static com.google.common.base.Predicates.and;
 
@@ -71,23 +76,19 @@ public class ApiDocConfig {
 
     @Bean
     @Order(2)
-    public Map<String, Documentation> documentationCache() {
+    public Map<String, Documentation> documentationCache() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         Map<String, Docket> docketMap = SpringContextUtils.getBeansOfType(Docket.class);
 
-        List<Documentation> documentations = new ArrayList<>();
+        Map<String, Documentation> documentations = new HashMap<>();
 
         for (Map.Entry<String, Docket> entry : docketMap.entrySet()) {
             Docket docket = entry.getValue();
 
-            Documentation documentation = new Documentation();
-
-            documentation.setDocInfo(docket.getDocInfo());
-            documentation.setGroupName(docket.getGroupName());
-            documentation.setEnabled(docket.isEnabled());
-            documentation.setDebuger(docket.isDebuger());
-
             List<RequestHandler> apis = docket.getApis();
-            List<Tab> tabs = new ArrayList<>();
+            if (ListUtils.isEmpty(apis)) {
+                continue;
+            }
+
             for (RequestHandler handler : apis) {
 
                 ApiIgnore apiIgnore = handler.getBeanAnnotation(ApiIgnore.class);
@@ -100,6 +101,18 @@ public class ApiDocConfig {
                     continue;
                 }
 
+                Documentation documentation = null;
+                if (ObjectUtils.isNotEmpty(documentations.get(api.group()))) {
+                    documentation = documentations.get(api.group());
+                } else {
+                    documentation = new Documentation();
+                }
+
+                documentation.setDocInfo(docket.getDocInfo());
+                documentation.setGroupName(api.group());
+                documentation.setEnabled(docket.isEnabled());
+                documentation.setDebuger(docket.isDebuger());
+
                 Tab tab = new Tab();
                 tab.setName(api.name());
                 tab.setSort(api.sort());
@@ -111,7 +124,14 @@ public class ApiDocConfig {
                 path.setUrl(url);
                 path.setMethod(method);
 
+                Map<String, Tab> tabMap = new HashMap<>();
+
                 ApiMethod apiMethod = handler.getAnnotation(ApiMethod.class);
+                if (null == apiMethod) {
+                    tab.setPaths(new ArrayList<>());
+                    tabMap.put(api.name(), tab);
+                    continue;
+                }
 
                 path.setDescription(apiMethod.description());
                 path.setName(apiMethod.name());
@@ -152,16 +172,58 @@ public class ApiDocConfig {
 
                 path.setResponses(responses);
 
-                tab.setPaths(null);
+                ResponseExample responseExample = new ResponseExample();
+                Class<?> response = apiMethod.response();
+                if (!"java.lang.Void".equals(response.getName())) {
+                    Field[] fields = response.getFields();
+                    for (Field field : fields) {
+                        Annotation[] annotations = field.getAnnotations();
+                        for (Annotation annotation : annotations) {
+                            if (annotation instanceof ApiField) {
+                                Map fieldJ = new HashMap();
+                                fieldJ.put("description", ((ApiField) annotation).name());
+                                fieldJ.put("type", field.getType().getSimpleName());
+                                fieldJ.put("field", field.getName());
 
-                tabs.add(tab);
+                                responseExample.setInfo(fieldJ);
+                            } else {
+                                continue;
+                            }
+                        }
+                    }
+
+                    Method[] declaredMethods = response.getMethods();
+                    Object obj = response.newInstance();
+                    for (Method declaredMethod : declaredMethods) {
+                        if ("fail".equals(declaredMethod.getName())) {
+                            responseExample.setFail(declaredMethod.invoke(obj));
+                        }
+                        if ("success".equals(declaredMethod.getName()) && declaredMethod.getParameterCount() == 0) {
+                            responseExample.setSuccess(declaredMethod.invoke(obj));
+                        }
+                    }
+                    path.setResponseExample(responseExample);
+                }
+
+                path.setDiscarded(apiMethod.discarded());
+
+                if (ObjectUtils.isNotEmpty(tabMap.get(tab.getName()))) {
+                    tab.getPaths().add(path);
+                } else {
+                    List<Path> paths = new ArrayList<>();
+                    paths.add(path);
+                    tab.setPaths(paths);
+                }
+
+                tabMap.put(api.name(), tab);
+
+                documentation.getTabs().addAll(tabMap.values());
+
+                documentations.put(api.group(), documentation);
             }
-            documentation.setTabs(tabs);
-
-            documentations.add(documentation);
         }
 
-        return null;
+        return documentations;
     }
 
     private Parameter buildParameter(ApiParam apiParam) {

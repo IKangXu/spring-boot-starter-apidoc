@@ -34,4 +34,6 @@ public class Path {
     private ResponseExample responseExample;
     // 参数
     private List<Parameter> parameters;
+
+    private boolean discarded;
 }
