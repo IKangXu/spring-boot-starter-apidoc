@@ -125,7 +125,7 @@ $(function () {
         scrollTo: "bottom"
     });
 
-    util.get('/api/api-docs', function (data) {
+    util.get('/v1/api-doc', function (data) {
         if (data.code === 200) {
             if (!($.trim(data.data) === '')) {
                 var _result = JSON.parse(data.data);
