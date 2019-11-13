@@ -127,6 +127,87 @@
         });
     }
 
+    /**
+     * 判断是否存在指定的标签页
+     * @param tabMainName
+     * @param tabName
+     * @returns {Boolean}
+     */
+    var checkTabIsExists = function(tabMainName, tabName){
+        var tab = $("#"+tabMainName+" > #tab_li_"+tabName);
+        //console.log(tab.length)
+        return tab.length > 0;
+    }
+
+    /**
+     * 关闭标签页
+     * @param button
+     */
+    var closeTab = function(button) {
+
+        //通过该button找到对应li标签的id
+        var li_id = $(button).parent().parent().attr('id');
+        var id = li_id.replace("tab_li_","");
+
+        //如果关闭的是当前激活的TAB，激活他的前一个TAB
+        $("li.active").each(function () {
+            if($(this).attr('id') == li_id)
+            {
+                $(this).prev().find("a").click();
+            }
+        })
+        // if ($("li.active").attr('id') == li_id) {
+        //     $("li.active").prev().find("a").click();
+        // }
+
+        //关闭TAB
+        $("#" + li_id).remove();
+        $("#tab_content_" + id).remove();
+    };
+
+    var refreshTab = function(button) {
+        //通过该button找到对应li标签的id
+        var li_id = $(button).parent().parent().attr('id');
+        var id = li_id.replace("tab_li_","");
+
+        $("#tab_content_" + id + " > iframe").attr('src', $("#tab_content_" + id + " > iframe").attr('src'));
+    }
+
+    /**
+     * 增加标签页
+     */
+    var addTab = function(options) {
+        //option:
+        //tabMainName:tab标签页所在的容器
+        //tabName:当前tab的名称
+        //tabTitle:当前tab的标题
+        //tabUrl:当前tab所指向的URL地址
+        var exists = checkTabIsExists(options.tabMainName, options.tabName);
+        if(exists){
+            $("#tab_a_"+options.tabName).click();
+        } else {
+            $("#"+options.tabMainName).append('<li id="tab_li_'+options.tabName+'"><a href="#tab_content_'+options.tabName+'" data-toggle="tab" id="tab_a_'+options.tabName+'">'+options.tabTitle+'</a>&nbsp;<span class="el-icon-close"></span></li>');
+
+            //固定TAB中IFRAME高度
+            mainHeight = $(document.body).height() - 165;
+            $("#tab_a_"+options.tabName).click();
+        }
+    }
+
+    var tabAdd = function(tabMainName,tabName,tabTitle,tabUrl) {
+        //option:
+        //tabMainName:tab标签页所在的容器
+        //tabName:当前tab的名称
+        //tabTitle:当前tab的标题
+        //tabUrl:当前tab所指向的URL地址
+        var options = {};
+        options.tabMainName = tabMainName;
+        options.tabName = tabName;
+        options.tabTitle = tabTitle;
+        options.tabUrl = tabUrl;
+        addTab(options);
+    }
+
     win.util = {
         post: post_fun,
         get: get_fun,
@@ -137,6 +218,9 @@
             get_cookie: get_cookie,
             del_cookie: del_cookie
         },
-        syntaxhighlight_json: syntaxhighlight_json
+        syntaxhighlight_json: syntaxhighlight_json,
+        tab: {
+            tabAdd: tabAdd
+        }
     };
 })(window, jQuery);

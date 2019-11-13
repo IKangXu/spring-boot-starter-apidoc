@@ -36,4 +36,6 @@ public class Path {
     private List<Parameter> parameters;
 
     private boolean discarded;
+
+    private String id;
 }

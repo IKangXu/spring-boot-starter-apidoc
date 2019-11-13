@@ -124,6 +124,13 @@ public class ApiDocConfig {
                 path.setUrl(url);
                 path.setMethod(method);
 
+                StringBuilder id = new StringBuilder(api.group());
+                id.append("_");
+                id.append(handler.getHandlerMethod().getBean());
+                id.append("_");
+                id.append(handler.getHandlerMethod().getMethod().getName());
+                path.setId(id.toString());
+
                 Map<String, Tab> tabMap = new HashMap<>();
 
                 ApiMethod apiMethod = handler.getAnnotation(ApiMethod.class);

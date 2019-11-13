@@ -90,6 +90,55 @@
             top: 16px;
             border: 4px solid #fff;
         }
+
+        .i-tags{
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            position: relative;
+            padding: 0 10px;
+            margin-bottom: 10px;
+            border-top: 1px solid #f6f6f6;
+            background-color: #fff;
+            -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+        }
+        .i-tags .nav-tabs > li {
+            list-style: none;
+            display: inline-block;
+            margin: 0 3px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 13px;
+            font-weight: 400;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .i-tags .nav-tabs > li > a {
+            color: #ccc;
+        }
+        .i-tags .nav-tabs > li.active {
+            border-bottom: 3px solid #409eff;
+        }
+        .i-tags .nav-tabs > li.active > a, .i-tags .nav-tabs > li.active .el-icon-close {
+            color: #409eff;
+        }
+        .tab-content .tab-pane{
+            display: none;
+        }
+        .el-icon-close:before {
+            -webkit-transform: scale(.9);
+            transform: scale(.9);
+            display: inline-block;
+        }
+        .el-icon-close:before {
+            content: "\2715";
+        }
+        .el-icon-close{
+            font-size: 12px;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -118,86 +167,21 @@
             <span class="version">版本：<strong></strong></span>
         </div>
         <div class="content">
-            <div class="tx-fluid">
-                <div class="content-body">
-                    <div class="display-none">
-                        <span>接口说明</span>
-                        <div class="headline"></div>
-                        <div class="alert-warning description">
-
+            <div class="i-tags">
+                <ul id="tab-div" class="nav nav-tabs">
+                    <li id="tab_li_home" class="active">
+                        <a href="#tab_content_home" id="tab_a_home">
+                            首页
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div id="content-div" class="tab-content">
+                <div>
+                    <div>
+                        <div id="tab_content_home" class="tab-pane">
+                            更新日志
                         </div>
-                    </div>
-                    <div class="display-none">
-                        <span>API地址</span>
-                        <div class="headline"></div>
-                        <div class="url">
-                        </div>
-                    </div>
-                    <div class="display-none">
-                        <span>是否需要登录</span>
-                        <div class="headline"></div>
-                        <div class="islogin"></div>
-                    </div>
-                    <div class="display-none">
-                        <span>请求字段说明</span>
-                        <div class="headline"></div>
-                        <div class="params">
-
-                        </div>
-                    </div>
-                    <div class="display-none">
-                        <span>响应字段说明</span>
-                        <div class="headline"></div>
-                        <div class="response">
-
-                        </div>
-                    </div>
-                    <div class="display-none">
-                        <span>响应成功示例</span>
-                        <div class="headline"></div>
-                        <div class="response-success">
-                            <pre id="success-result">
-
-                            </pre>
-                        </div>
-                    </div>
-                    <div class="display-none">
-                        <span>响应失败示例</span>
-                        <div class="headline"></div>
-                        <div class="response-fail">
-                            <pre id="fail-result">
-
-                            </pre>
-                        </div>
-                    </div>
-                    <div class="display-none">
-                        <span>响应接受类型</span>
-                        <div class="headline"></div>
-                        <div class="produces"></div>
-                    </div>
-                    <div class="display-none">
-                        <span>响应状态码</span>
-                        <div class="headline"></div>
-                        <div class="responses">
-
-                        </div>
-                    </div>
-                    <div class="display-none">
-                        <span>示例代码</span>
-                        <div class="headline"></div>
-                        <div class="samplecode">
-                            <signs>
-                                <sign class="sign-selected" tag="javascript">javascript</sign>
-                                <!--<sign tag="java">java</sign>
-                                <sign tag="csharp">c-sharp</sign>-->
-                            </signs>
-                            <pre name="code" class="java" id="samplecode">
-
-                            </pre>
-                        </div>
-                    </div>
-                    <div class="log-update">
-
                     </div>
                 </div>
             </div>

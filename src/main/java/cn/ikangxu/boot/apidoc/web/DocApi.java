@@ -7,6 +7,7 @@ package cn.ikangxu.boot.apidoc.web;
 import cn.ikangxu.boot.apidoc.annotation.Api;
 import cn.ikangxu.boot.apidoc.annotation.ApiIgnore;
 import cn.ikangxu.boot.apidoc.common.Documentation;
+import cn.ikangxu.boot.apidoc.common.Json;
 import cn.ikangxu.boot.apidoc.common.entity.Docket;
 import cn.ikangxu.boot.apidoc.util.ObjectUtils;
 import cn.ikangxu.boot.apidoc.util.SpringContextUtils;
@@ -37,7 +38,10 @@ public class DocApi {
 
     @GetMapping(value = "v1/api-doc")
     public ResponseEntity getDocumentation(@RequestParam(value = "group", required = false) String docGroup) {
-        return new ResponseEntity(documentationCache, HttpStatus.OK);
+        if (!ObjectUtils.isNotEmpty(docGroup)) {
+            docGroup = "default";
+        }
+        return new ResponseEntity(Json.success(documentationCache.get(docGroup)), HttpStatus.OK);
     }
 
 }
