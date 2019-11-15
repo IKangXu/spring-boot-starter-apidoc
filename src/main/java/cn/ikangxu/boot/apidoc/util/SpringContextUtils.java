@@ -19,7 +19,6 @@ import java.util.Map;
  * @description
  * @date 2019/11/7 9:24
  */
-@Component("springContextUtils")
 public class SpringContextUtils implements ApplicationContextAware {
     public static ApplicationContext applicationContext;
 

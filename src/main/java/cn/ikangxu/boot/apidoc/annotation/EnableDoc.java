@@ -22,6 +22,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@DependsOn({"requestHandlerProvider"})
+@Import(ImportDocRegistrar.class)
 public @interface EnableDoc {
 }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
  * @description
  * @date 2019/11/14 17:27
  */
-@Component("propertiesConst")
 public class PropertiesConst {
     // 成功返回模板，默认返回success，可以定义模板，语法支持{{DATA}}   可以定义模板为{"code":200,"msg":"success","data":{{DATA}}}，会根据自己自定义的模板进行返回值示例的构造
     public static Object RESPONSE_TEMPLATE_SUCCESS_TEMPLATE = SpringContextUtils.getProperty("cn.ikangxu.doc.response.success.template");

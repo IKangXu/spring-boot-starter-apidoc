@@ -25,8 +25,6 @@ public @interface ApiMethod {
     // 方法类型
     HttpMethod[] method();
 
-    String[] produces();
-
     // 返回值
     Class<?> response() default Void.class;
 

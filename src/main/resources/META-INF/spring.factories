@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cn.ikangxu.boot.apidoc.common.PropertiesConst,\
-cn.ikangxu.boot.apidoc.common.RequestHandlerProvider
+cn.ikangxu.boot.apidoc.config.ApiDocConfig,\
+cn.ikangxu.boot.apidoc.web.DocApi
+

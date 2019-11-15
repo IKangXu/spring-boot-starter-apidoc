@@ -29,7 +29,6 @@ public class TestApi {
             name = "测试接口3-test",
             method = HttpMethod.GET,
             response = Void.class,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
             description = "",
             discarded = false
     )

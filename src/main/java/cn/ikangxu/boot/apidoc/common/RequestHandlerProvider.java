@@ -22,7 +22,6 @@ import java.util.*;
  * @description
  * @date 2019/11/8 17:00
  */
-@Component("requestHandlerProvider")
 @DependsOn({"springContextUtils", "propertiesConst"})
 public class RequestHandlerProvider {
 

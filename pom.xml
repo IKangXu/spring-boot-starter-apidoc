@@ -7,7 +7,7 @@
   <groupId>cn.ikangxu</groupId>
   <artifactId>spring-boot-starter-apidoc</artifactId>
   <version>1.0.0</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <name>spring-boot-starter-apidoc Maven Webapp</name>
   <!-- FIXME change it to the project's website -->

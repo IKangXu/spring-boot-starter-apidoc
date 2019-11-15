@@ -216,7 +216,7 @@ $(function () {
         scrollTo: "bottom"
     });
 
-    util.get('/v1/api-doc', function (data) {
+    util.get('v1/api-doc', function (data) {
         if (data.code === 200) {
             if (!($.trim(data.data) === '')) {
                 var _result = data.data;
@@ -455,12 +455,18 @@ var callback_page_html = function (data) {
                 if (_produces.length > 0) {
                     var _produce_html = "[";
                     for (var _k in _produces) {
-                        _produce_html += ("\"" + _produces[_k].type + "/" + _produces[_k].subtype + ";charset=" + _produces[_k].charset + "\",");
+                        _produce_html += ("\"" + _produces[_k].type + "/" + _produces[_k].subtype);
+                        if (_produces[_k].charset) {
+                            _produce_html += (";charset=" + _produces[_k].charset);
+                        }
+                        _produce_html += "\",";
                     }
                     _produce_html = _produce_html.substring(0, _produce_html.length - 1);
                     _produce_html += "]";
 
                     _html += util.syntaxhighlight_json(_produce_html);
+                } else {
+                    _html += "无";
                 }
 
                 _html += "</pre>\n" +

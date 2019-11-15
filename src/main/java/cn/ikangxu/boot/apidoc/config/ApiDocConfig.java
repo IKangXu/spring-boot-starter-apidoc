@@ -21,6 +21,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -128,7 +129,14 @@ public class ApiDocConfig {
                 tab.setSort(api.sort());
                 tab.setDescription(api.description());
 
-                String url = handler.getRequestMapping().getPatternsCondition().getPatterns().toArray()[0].toString();
+                String contextPath = ((AnnotationConfigServletWebServerApplicationContext) SpringContextUtils.applicationContext).getServletContext().getContextPath();
+
+                String url = "";
+                if (!contextPath.equals("/")) {
+                    url += contextPath;
+                }
+                url += handler.getRequestMapping().getPatternsCondition().getPatterns().toArray()[0].toString();
+
                 String method = handler.getRequestMapping().getMethodsCondition().getMethods().toArray()[0].toString();
                 Path path = new Path();
                 path.setUrl(url);
