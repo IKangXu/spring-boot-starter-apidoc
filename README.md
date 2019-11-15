@@ -7,18 +7,18 @@
 ### 调用方式
 
 ```yaml
-	cn:
-	  ikangxu:
-		doc:
-		 global:
-		   enabled: true
-		 response:
-		   success:
-			 template: {"code":200,"msg":"success","data":{{DATA}}}
-			 type: json
-		   fail:
-			 template: failure
-			 type: text         
+    cn:
+      ikangxu:
+        doc:
+          global:
+            enabled: true
+          response:
+            success:
+              template: {"code":200,"msg":"success","data":{{DATA}}}
+              type: json
+            fail:
+              template: failure
+              type: text         
 ```
 
 上面的参数配置，是文档默认的参数值，如果需要自定义，修改即可。
