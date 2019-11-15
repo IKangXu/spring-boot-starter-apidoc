@@ -1,16 +1,17 @@
 $(function () {
     var _length = $('.tx-this').length;
     if (_length > 0) {
-        $('.tx-fluid .content-body >div').addClass('display-none');
+        // $('.tx-fluid .content-body >div').addClass('display-none');
     }
 
-    $('.sdk-body .left .content  ul > li').live('click', function (event) {
-        //if (event.target.parentElement == this || event.target.parentElement.parentElement == this) {
-        $('.sdk-body .left .content  ul > li').each(function (index, element) {
-            $(this).removeClass('tx-itemed');
-        })
-        $(this).addClass('tx-itemed');
-        //}
+    $('.sdk-body > .left > .content  ul > li').live('click', function (event) {
+        if (event.target.parentElement == this) {
+            if ($(this).hasClass('tx-itemed')) {
+                $(this).removeClass('tx-itemed');
+            } else {
+                $(this).addClass('tx-itemed');
+            }
+        }
     })
 
     $('ul.nav-tabs > li').live('click', function (event) {
@@ -21,10 +22,81 @@ $(function () {
         $(this).addClass("active");
         $(this).find(".el-icon-close").show();
 
+        $(".tab-content .tab-pane").removeClass("active");
         $(".tab-content .tab-pane").hide();
         $(".tab-content .tab-pane" + href).show();
 
+        if (!$("#" + href.replace("#tab_content_", "")).hasClass('tx-this')) {
+            $("#" + href.replace("#tab_content_", "")).click();
+            $("#" + href.replace("#tab_content_", "")).parent().parent().addClass("tx-itemed");
+        }
 
+        // 将文档和调试调换
+        if ($('.pane-menu .doc_' + href.replace("#tab_content_", "")).hasClass('active')) {
+            $('.pane-content .doc_' + href.replace("#tab_content_", "")).addClass('active');
+            $('.pane-content .doc_' + href.replace("#tab_content_", "")).siblings().removeClass('active');
+        }
+        if ($('.pane-menu .debuger_' + href.replace("#tab_content_", "")).hasClass('active')) {
+            $('.pane-content .debuger_' + href.replace("#tab_content_", "")).addClass('active');
+            $('.pane-content .debuger_' + href.replace("#tab_content_", "")).siblings().removeClass('active');
+        }
+    })
+
+    $('ul.nav-tabs > li').live('mouseover', function (event) {
+        if ($(this).hasClass('active')) {
+            return;
+        }
+        $(this).find(".el-icon-close").show();
+    })
+    $('ul.nav-tabs > li').live('mouseout', function (event) {
+        if ($(this).hasClass('active')) {
+            return;
+        }
+        $(this).find(".el-icon-close").hide();
+    })
+
+    // tab关闭事件
+    $('ul.nav-tabs > li > .el-icon-close').live('click', function (event) {
+
+        var href;
+        // 选中上级兄弟节点
+        if ($(this).parent().next().length == 0) {
+            $(this).parent().prev().addClass('active');
+            $(this).parent().prev().find(".el-icon-close").show();
+
+            href = $(this).parent().prev().find("a").attr("href")
+        } else {
+            $(this).parent().next().addClass('active');
+            $(this).parent().next().find(".el-icon-close").show();
+            href = $(this).parent().next().find("a").attr("href")
+        }
+
+        $(".tab-content .tab-pane").removeClass("active");
+        $(".tab-content .tab-pane").hide();
+        $(".tab-content .tab-pane" + href).show();
+
+        $(this).parent().remove();
+
+        // 禁止触发父级节点事件
+        event = event || window.event;
+        if (event.stopPropagation) { //W3C阻止冒泡方法
+            event.stopPropagation();
+        } else {
+            event.cancelBubble = true; //IE阻止冒泡方法
+        }
+    })
+
+    $('.tab-pane>.pane-menu > div').live('click', function (event) {
+        var tag = $(this).attr("data-tag");
+        $('.pane-content div.content').each(function (index, element) {
+            if ($(this).attr("data-tag") === tag) {
+                $(this).addClass('active');
+            } else {
+                $(this).removeClass('active');
+            }
+        })
+        $(this).siblings().removeClass('active');
+        $(this).addClass('active');
     })
 
     // 监听输入框事件
@@ -103,7 +175,7 @@ $(function () {
             $(this).removeClass('sign-selected');
         })
         $('sign[tag="javascript"]').addClass('sign-selected');
-        $(".tx-fluid").mCustomScrollbar("scrollTo", "top");
+        // $(".tx-fluid").mCustomScrollbar("scrollTo", "top");
 
         var tabTitle = $(this).find("a").attr("title");
         var tabName = $(this).attr("id");
@@ -139,7 +211,7 @@ $(function () {
     })
 
     // 初始化滚动条
-    $(".tx-fluid,.sdk-body>.left>.content>div.menu, .tab-content").mCustomScrollbar({
+    $(".tx-fluid,.sdk-body>.left>.content>div.menu").mCustomScrollbar({
         theme: "minimal-dark",
         scrollTo: "bottom"
     });
@@ -163,7 +235,7 @@ $(function () {
                 $('.left .content>div.menu ul').empty().append(_html);
 
                 // 初始化右侧内容结构
-                callback_page_html(_result.tabs);
+                callback_page_html(_result);
 
                 init();
             }
@@ -227,7 +299,7 @@ var init = function () {
             if (_tabs[_i].paths.length > 0) {
                 for (var _j in _tabs[_i].paths) {
                     if (_tabs[_i].paths[_j].id === _id) {
-                        callback_page_html(_tabs[_i].paths[_j]);
+                        // callback_page_html(_tabs[_i].paths[_j]);
                         $('.sdk-body .left .content>div.menu ul > li').each(function (index, element) {
                             $(this).removeClass('tx-itemed');
                         })
@@ -242,185 +314,204 @@ var init = function () {
             }
         }
     } else {
-        $('.tx-fluid .content-body >div').addClass('display-none');
-        $('.tx-fluid .content-body >div:last-child').removeClass('display-none');
+        // $('.tx-fluid .content-body >div').addClass('display-none');
+        // $('.tx-fluid .content-body >div:last-child').removeClass('display-none');
     }
 }
 
 var callback_page_html = function (data) {
+
+    var tags = data.tabs;
+    var debuger = data.debuger;
+
     var _html = "";
-    for (var _i in data) {
-        if (data[_i].paths.length > 0) {
-            for (var _j in data[_i].paths) {
-                // if (data[_i].paths[_j].id === $(this).attr('id')) {
-                // callback_page_html(data[_i].paths[_j]);
-                _html += "<div id=\"tab_content_" + data[_i].paths[_j].id + "\" class=\"tab-pane\">\n" +
-                    "\t<div class=\"tx-fluid\">\n" +
-                    "\t\t<div class=\"content-body\">\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>接口说明</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"alert-warning description\">\n" +
-                    "\n" +
+    for (var _i in tags) {
+        if (tags[_i].paths.length > 0) {
+            for (var _j in tags[_i].paths) {
+                _html += "<div id=\"tab_content_" + tags[_i].paths[_j].id + "\" class=\"tab-pane\">\n" +
+                    "\t<div class=\"pane-menu\">\n" +
+                    "\t\t<div data-tag=\"doc_" + tags[_i].paths[_j].id + "\" class=\"active doc_" + tags[_i].paths[_j].id + "\"><span class=\"pane-icon-doc\"></span>&nbsp;文档</div>\n";
+                if (debuger) {
+                    _html += "\t\t<div data-tag=\"debuger_" + tags[_i].paths[_j].id + "\" class=\"debuger_" + tags[_i].paths[_j].id + "\"><span class=\"pane-icon-debuger\"></span>&nbsp;调试</div>\n";
+                }
+                _html += "\t</div>\n" +
+                    "\t<div class=\"pane-content\">\n" +
+                    "\t\t<div class=\"content doc active doc_" + tags[_i].paths[_j].id + "\" data-tag=\"doc_" + tags[_i].paths[_j].id + "\">\n" +
+                    "\t\t\t<div class=\"tx-fluid\">\n" +
+                    "\t\t\t\t<div class=\"content-body\">\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>接口说明</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"alert-warning description\">\n" +
+                    "\n" + tags[_i].paths[_j].description +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>API地址</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"url\"><pre>\n";
+                var _obj = {
+                    method: tags[_i].paths[_j].method,
+                    url: tags[_i].paths[_j].url
+                }
+                _html += (tags[_i].paths[_j].method + "\t" + tags[_i].paths[_j].url + "");
+                _html += "</pre>\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>请求字段说明</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"params\">\n";
+
+                var parameters = tags[_i].paths[_j].parameters;
+                _html += '<table>'
+                    + '	<thead>'
+                    + '	<tr>'
+                    + '		<th>参数</th>'
+                    + '		<th>类型</th>'
+                    + '		<th>请求类型</th>'
+                    + '		<th>是否必须</th>'
+                    + '		<th>说明</th>'
+                    + '		<th>示例</th>'
+                    + '	</tr>'
+                    + '	</thead>'
+                    + '	<tbody>';
+                for (var _k = 0; _k < parameters.length; _k++) {
+                    var _parameter = parameters[_k];
+
+                    _html += '	<tr>'
+                        + '		<td>' + _parameter.name + '</td>'
+                        + '		<td>' + _parameter.dataType + '</td>'
+                        + '		<td>' + _parameter.paramType + '</td>'
+                        + '		<td>' + (_parameter.required ? '是' : '否') + '</td>'
+                        + '		<td>' + _parameter.description + '</td>'
+                        + '		<td>' + _parameter.example + '</td>'
+                        + '	</tr>';
+                }
+                _html += '	</tbody></table>';
+
+                _html += "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>响应字段说明</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"response\">\n";
+
+                var _responseExample = tags[_i].paths[_j].responseExample;
+                if (_responseExample) {
+                    var _response_info = _responseExample.info;
+                    _html += '<table>'
+                        + '	<thead>'
+                        + '	<tr>'
+                        + '		<th>参数</th>'
+                        + '		<th>类型</th>'
+                        + '		<th>说明</th>'
+                        + '		<th>示例</th>'
+                        + '	</tr>'
+                        + '	</thead>'
+                        + '	<tbody>';
+                    for (var _k = 0; _k < _response_info.length; _k++) {
+                        _html += '	<tr>'
+                            + '		<td>' + _response_info[_k].field + '</td>'
+                            + '		<td>' + _response_info[_k].type + '</td>'
+                            + '		<td>' + _response_info[_k].description + '</td>'
+                            + '		<td>' + _response_info[_k].example + '</td>'
+                            + '	</tr>';
+                    }
+                    _html += '	</tbody>'
+                        + '</table>';
+                }
+
+                _html += "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>响应成功示例</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"response-success\">\n" +
+                    "\t\t\t\t\t\t\t<pre id=\"success-result\">\n";
+                if (_responseExample) {
+                    _html += util.syntaxhighlight_json(_responseExample.success);
+                }
+                _html += "</pre>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>响应失败示例</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"response-fail\">\n" +
+                    "\t\t\t\t\t\t\t<pre id=\"fail-result\">\n";
+                if (_responseExample) {
+                    _html += util.syntaxhighlight_json(_responseExample.fail);
+                }
+                _html += "</pre>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>响应接受类型</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"produces\">\n" +
+                    "\t\t\t\t\t\t\t<pre id=\"fail-result\">\n";
+
+                var _produces = tags[_i].paths[_j].produces;
+                if (_produces.length > 0) {
+                    var _produce_html = "[";
+                    for (var _k in _produces) {
+                        _produce_html += ("\"" + _produces[_k].type + "/" + _produces[_k].subtype + ";charset=" + _produces[_k].charset + "\",");
+                    }
+                    _produce_html = _produce_html.substring(0, _produce_html.length - 1);
+                    _produce_html += "]";
+
+                    _html += util.syntaxhighlight_json(_produce_html);
+                }
+
+                _html += "</pre>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t<div>\n" +
+                    "\t\t\t\t\t\t<span>响应状态码</span>\n" +
+                    "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
+                    "\t\t\t\t\t\t<div class=\"responses\">\n";
+                var _responses = tags[_i].paths[_j].responses;
+                if (_responses.length > 0) {
+                    _html += '<table>'
+                        + '	<thead>'
+                        + '	<tr>'
+                        + '		<th>HTTP状态码</th>'
+                        + '		<th>原因</th>'
+                        + '		<th>描述</th>'
+                        + '	</tr>'
+                        + '	</thead>'
+                        + '	<tbody>';
+                    for (var _k in _responses) {
+                        _html += '	<tr>'
+                            + '		<td>' + _responses[_k].code + '</td>'
+                            + '		<td>' + _responses[_k].msg + '</td>'
+                            + '		<td>' + _responses[_k].description + '</td>'
+                            + '	</tr>';
+                    }
+                    _html += '	</tbody>'
+                        + '</table>';
+                }
+                _html += "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
                     "\t\t\t\t</div>\n" +
                     "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>API地址</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"url\">\n" + data[_i].paths[_j].url +
-                    "\t\t\t\t</div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>是否需要登录</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"islogin\"></div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>请求字段说明</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"params\">\n" +
-                    "\n" +
-                    "\t\t\t\t</div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>响应字段说明</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"response\">\n" +
-                    "\n" +
-                    "\t\t\t\t</div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>响应成功示例</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"response-success\">\n" +
-                    "\t\t\t\t\t<pre id=\"success-result\">\n" +
-                    "\n" +
-                    "\t\t\t\t\t</pre>\n" +
-                    "\t\t\t\t</div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>响应失败示例</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"response-fail\">\n" +
-                    "\t\t\t\t\t<pre id=\"fail-result\">\n" +
-                    "\n" +
-                    "\t\t\t\t\t</pre>\n" +
-                    "\t\t\t\t</div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>响应接受类型</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"produces\"></div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t\t<div>\n" +
-                    "\t\t\t\t<span>响应状态码</span>\n" +
-                    "\t\t\t\t<div class=\"headline\"></div>\n" +
-                    "\t\t\t\t<div class=\"responses\">\n" +
-                    "\n" +
-                    "\t\t\t\t</div>\n" +
-                    "\t\t\t</div>\n" +
-                    "\t\t</div>\n" +
-                    "\t</div>\n" +
+                    "\t\t</div>\n";
+                if (debuger) {
+                    _html += "\t\t<div class=\"content debuger debuger_" + tags[_i].paths[_j].id + "\" data-tag=\"debuger_" + tags[_i].paths[_j].id + "\">\n" +
+                        "\t\t\t我是调试页面\n" +
+                        "\t\t</div>\n";
+                }
+                _html += "\t</div>\n" +
                     "</div>";
-                //}
             }
         }
     }
 
-    $("#content-div>div>div").append(_html);
-
-    // $('.tx-fluid .content-body >div').removeClass('display-none');
-    // $('.tx-fluid .content-body >div:last-child').addClass('display-none');
-    // $('.content-body .description').empty().append($.trim(data.description) === '' ? '无' : data.description);
-    // $('.content-body .url').empty().append('<cite>' + data.method + '</cite>&nbsp;' + data.url);
-    // $('.content-body .islogin').empty().append(data.islogin ? '是' : '否');
-    // var _parameters = data.parameters, _parameters_html = '';
-    // if (_parameters.length > 0) {
-    //     _parameters_html += '<table>'
-    //         + '	<thead>'
-    //         + '	<tr>'
-    //         + '		<th>参数</th>'
-    //         + '		<th>类型</th>'
-    //         + '		<th>请求类型</th>'
-    //         + '		<th>是否必须</th>'
-    //         + '		<th>说明</th>'
-    //         + '	</tr>'
-    //         + '	</thead>'
-    //         + '	<tbody>';
-    //     for (var _i in _parameters) {
-    //         _parameters_html += '	<tr>'
-    //             + '		<td>' + _parameters[_i].name + '</td>'
-    //             + '		<td>' + _parameters[_i].dataType + '</td>'
-    //             + '		<td>' + _parameters[_i].paramType + '</td>'
-    //             + '		<td>' + (_parameters[_i].required ? '是' : '否') + '</td>'
-    //             + '		<td>' + _parameters[_i].description + '</td>'
-    //             + '	</tr>';
-    //     }
-    //     _parameters_html += '	</tbody>'
-    //         + '</table>';
-    // } else {
-    //     _parameters_html = '无';
-    // }
-    // $('.content-body .params').empty().append(_parameters_html);
-    // var _response = data.responseExample, _response_html = '';
-    // if (_response && _response.info.length > 0) {
-    //     var _response_info = _response.info;
-    //     _response_html += '<table>'
-    //         + '	<thead>'
-    //         + '	<tr>'
-    //         + '		<th>参数</th>'
-    //         + '		<th>类型</th>'
-    //         + '		<th>说明</th>'
-    //         + '	</tr>'
-    //         + '	</thead>'
-    //         + '	<tbody>';
-    //     for (var _i in _response.info) {
-    //         _response_html += '	<tr>'
-    //             + '		<td>' + _response.info[_i].field + '</td>'
-    //             + '		<td>' + _response.info[_i].type + '</td>'
-    //             + '		<td>' + _response.info[_i].description + '</td>'
-    //             + '	</tr>';
-    //     }
-    //     _response_html += '	</tbody>'
-    //         + '</table>'
-    // } else {
-    //     _response_html = '无';
-    // }
-    // $('.content-body .response').empty().append(_response_html);
-    // if(_response) {
-    //     var _success = _response.success;
-    //     document.getElementById('success-result').innerHTML = util.syntaxhighlight_json(_success);
-    //     var _fail = _response.fail;
-    //     document.getElementById('fail-result').innerHTML = util.syntaxhighlight_json(_fail);
-    // }
-    // var _produces = data.produces, _produces_html = '';
-    // for (var _i in _produces) {
-    //     _produces_html += _produces[_i] + '<br />';
-    // }
-    // $('.content-body .produces').empty().append(_produces_html);
-    // var _responses = data.responses, _responses_html = '';
-    // if (_responses.length > 0) {
-    //     _responses_html += '<table>'
-    //         + '	<thead>'
-    //         + '	<tr>'
-    //         + '		<th>HTTP状态码</th>'
-    //         + '		<th>原因</th>'
-    //         + '	</tr>'
-    //         + '	</thead>'
-    //         + '	<tbody>';
-    //     for (var _i in _responses) {
-    //         _responses_html += '	<tr>'
-    //             + '		<td>' + _responses[_i].code + '</td>'
-    //             + '		<td>' + _responses[_i].msg + '</td>'
-    //             + '	</tr>';
-    //     }
-    //     _responses_html += '	</tbody>'
-    //         + '</table>';
-    // } else {
-    //     _responses_html = '无';
-    // }
-    // $('.content-body .responses').empty().append(_responses_html);
-    //
-    // dp.SyntaxHighlighter.ClipboardSwf = './SyntaxHighlighter/clipboard.swf';
-    // dp.SyntaxHighlighter.HighlightAll("code");
+    $("#content-div").append(_html);
+    $(".tab-pane .pane-content").mCustomScrollbar({
+        scrollButtons: {enable: true},
+        theme: "minimal-dark",
+        scrollbarPosition: "outside",
+        mouseWheelPixels: 200
+    });
 }

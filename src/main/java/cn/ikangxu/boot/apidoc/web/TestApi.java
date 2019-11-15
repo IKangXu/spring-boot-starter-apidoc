@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestApi {
 
     @ApiMethod(
-            name = "测试接口3",
+            name = "测试接口3-test",
             method = HttpMethod.GET,
             response = Void.class,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -42,7 +42,7 @@ public class TestApi {
             @ApiResponse(code = 500, msg = "错误", description = "")
     })
     @GetMapping(value = "test3", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String test1(String testParam1, String testParam2) {
+    public String test(String testParam1, String testParam2) {
         return "test3";
     }
 

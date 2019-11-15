@@ -6,18 +6,24 @@ package cn.ikangxu.boot.apidoc.config;
 
 import cn.ikangxu.boot.apidoc.annotation.*;
 import cn.ikangxu.boot.apidoc.common.Documentation;
+import cn.ikangxu.boot.apidoc.common.PropertiesConst;
 import cn.ikangxu.boot.apidoc.common.RequestHandler;
+import cn.ikangxu.boot.apidoc.common.TemplateType;
 import cn.ikangxu.boot.apidoc.common.entity.*;
+import cn.ikangxu.boot.apidoc.common.test.TestEntity;
 import cn.ikangxu.boot.apidoc.util.ListUtils;
-import cn.ikangxu.boot.apidoc.util.MapUtils;
 import cn.ikangxu.boot.apidoc.util.ObjectUtils;
 import cn.ikangxu.boot.apidoc.util.SpringContextUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -42,10 +49,13 @@ import static com.google.common.base.Predicates.and;
  */
 @Configuration
 @EnableDoc
+@DependsOn({"springContextUtils", "propertiesConst"})
 public class ApiDocConfig {
 
     @Autowired
     private List<RequestHandler> requestHandlers;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Bean
     @Order(1)
@@ -76,7 +86,7 @@ public class ApiDocConfig {
 
     @Bean
     @Order(2)
-    public Map<String, Documentation> documentationCache() throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public Map<String, Documentation> documentationCache() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException {
         Map<String, Docket> docketMap = SpringContextUtils.getBeansOfType(Docket.class);
 
         Map<String, Documentation> documentations = new HashMap<>();
@@ -181,34 +191,33 @@ public class ApiDocConfig {
 
                 ResponseExample responseExample = new ResponseExample();
                 Class<?> response = apiMethod.response();
+                List<Map<String, Object>> fieldInfo = new ArrayList<>();
                 if (!"java.lang.Void".equals(response.getName())) {
-                    Field[] fields = response.getFields();
+                    Map<String, Object> examples = new HashMap<>();
+                    Field[] fields = response.getDeclaredFields();
                     for (Field field : fields) {
                         Annotation[] annotations = field.getAnnotations();
                         for (Annotation annotation : annotations) {
-                            if (annotation instanceof ApiField) {
-                                Map fieldJ = new HashMap();
-                                fieldJ.put("description", ((ApiField) annotation).name());
+                            if (annotation instanceof ApiResponseField) {
+                                Map<String, Object> fieldJ = new HashMap();
+                                fieldJ.put("description", ((ApiResponseField) annotation).name());
+                                String example = ((ApiResponseField) annotation).example();
                                 fieldJ.put("type", field.getType().getSimpleName());
-                                fieldJ.put("field", field.getName());
+                                String name = field.getName();
+                                fieldJ.put("field", name);
+                                fieldJ.put("example", example);
+                                fieldInfo.add(fieldJ);
 
-                                responseExample.setInfo(fieldJ);
+                                examples.put(name, example);
                             } else {
                                 continue;
                             }
                         }
                     }
 
-                    Method[] declaredMethods = response.getMethods();
-                    Object obj = response.newInstance();
-                    for (Method declaredMethod : declaredMethods) {
-                        if ("fail".equals(declaredMethod.getName())) {
-                            responseExample.setFail(declaredMethod.invoke(obj));
-                        }
-                        if ("success".equals(declaredMethod.getName()) && declaredMethod.getParameterCount() == 0) {
-                            responseExample.setSuccess(declaredMethod.invoke(obj));
-                        }
-                    }
+                    responseExample.setFail(buildSuccessByType(PropertiesConst.RESPONSE_TEMPLATE_FAILURE_TEMPLATE.toString(), null, PropertiesConst.RESPONSE_TEMPLATE_FAILURE_TYPE));
+                    responseExample.setSuccess(buildSuccessByType(PropertiesConst.RESPONSE_TEMPLATE_SUCCESS_TEMPLATE.toString(), examples, PropertiesConst.RESPONSE_TEMPLATE_SUCCESS_TYPE));
+                    responseExample.setInfo(fieldInfo);
                     path.setResponseExample(responseExample);
                 }
 
@@ -247,4 +256,26 @@ public class ApiDocConfig {
         return Response.builder().code(apiResponse.code()).description(apiResponse.description()).msg(apiResponse.msg()).build();
     }
 
+    private Object buildSuccess(String template, Object object) throws JsonProcessingException {
+        if (!ObjectUtils.isNotEmpty(object)) {
+            return template;
+        }
+        String param = objectMapper.writeValueAsString(object);
+        if (!template.contains("{{DATA}}")) {
+            return param;
+        }
+        return (Object) template.replace("{{DATA}}", param);
+    }
+
+    private Object buildSuccessByType(String template, Object object, Object type) throws IOException {
+        String response = buildSuccess(template, object).toString();
+
+        if (((String) type).toUpperCase().equals(TemplateType.JSON.name())) {
+            return objectMapper.readValue(response, objectMapper.getTypeFactory().constructParametricType(HashMap.class, Object.class, Object.class));
+        }
+        if (((String) type).toUpperCase().equals(TemplateType.TEXT.name())) {
+            return response;
+        }
+        return "";
+    }
 }

@@ -7,139 +7,6 @@
     <link rel="stylesheet" href="./doc/js/malihu/css/jquery.mCustomScrollbar.min.css">
     <link rel="stylesheet" href="./doc/css/api-ui.css">
     <link rel="stylesheet" href="./doc/css/SyntaxHighlighter/SyntaxHighlighter.css"/>
-    <style>
-        pre {
-            outline: 1px solid #F8F8F8;
-            padding: 5px;
-            margin: 5px;
-            font-size: 1rem;
-            font-family: sans-serif;
-        }
-
-        .string {
-            color: #3AB54A;
-        }
-
-        .number {
-            color: #25AAE7;
-        }
-
-        .boolean {
-            color: #FA8280;
-        }
-
-        .null {
-            color: #F3592A;
-        }
-
-        .key {
-            color: #9227AC;
-        }
-
-        .dp-highlighter {
-            font-family: "Consolas", "Courier New", Courier, mono, serif;
-            font-size: 12px;
-            background-color: #E7E5DC;
-            width: 99%;
-            overflow: auto;
-            margin: 5px 0 18px 0 !important;
-            padding-top: 1px;
-        }
-
-        #log {
-            position: relative;
-            padding-left: 56px;
-            line-height: 24px;
-            font-size: .9rem;
-            color: #7a7a7a;
-        }
-
-        #log:before {
-            content: "";
-            background: #e2e2e2;
-            height: 100%;
-            top: 0;
-            left: 33px;
-            width: 1px;
-            position: absolute;
-        }
-
-        #log:after {
-            height: 30px;
-            content: "";
-            display: block;
-            clear: both;
-        }
-
-        #log h5 {
-            font-weight: bold;
-            font-size: 16px;
-            /* padding-top: 18px; */
-            line-height: 50px;
-            position: relative;
-        }
-
-        #log h5:before {
-            content: "";
-            width: 11px;
-            height: 11px;
-            background: #e2e2e2;
-            border-radius: 11px;
-            position: absolute;
-            left: -32px;
-            top: 16px;
-            border: 4px solid #fff;
-        }
-
-        .i-tags{
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            position: relative;
-            padding: 0 10px;
-            margin-bottom: 10px;
-            border-top: 1px solid #f6f6f6;
-            background-color: #fff;
-            -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
-            box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
-        }
-        .i-tags .nav-tabs > li {
-            list-style: none;
-            display: inline-block;
-            margin: 0 3px;
-            height: 40px;
-            line-height: 40px;
-            font-size: 13px;
-            font-weight: 400;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-        .i-tags .nav-tabs > li > a {
-            color: #ccc;
-        }
-        .i-tags .nav-tabs > li.active {
-            border-bottom: 3px solid #409eff;
-        }
-        .i-tags .nav-tabs > li.active > a, .i-tags .nav-tabs > li.active .el-icon-close {
-            color: #409eff;
-        }
-        .tab-content .tab-pane{
-            display: none;
-        }
-        .el-icon-close:before {
-            -webkit-transform: scale(.9);
-            transform: scale(.9);
-            display: inline-block;
-        }
-        .el-icon-close:before {
-            content: "\2715";
-        }
-        .el-icon-close{
-            font-size: 12px;
-            margin-left: 5px;
-        }
-    </style>
 </head>
 <body>
 <div class="sdk-body">
@@ -177,12 +44,9 @@
                 </ul>
             </div>
             <div id="content-div" class="tab-content">
-                <div>
-                    <div>
-                        <div id="tab_content_home" class="tab-pane">
-                            更新日志
-                        </div>
-                    </div>
+
+                <div id="tab_content_home" class="tab-pane active">
+                    文档说明在此编写
                 </div>
             </div>
         </div>

@@ -17,9 +17,11 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ApiField {
+public @interface ApiResponseField {
     // 返回结果
     // 正确的返回结果
     // 错误的返回结果
     String name();
+
+    String example() default "";
 }

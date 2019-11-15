@@ -184,7 +184,9 @@
         //tabUrl:当前tab所指向的URL地址
         var exists = checkTabIsExists(options.tabMainName, options.tabName);
         if(exists){
-            $("#tab_a_"+options.tabName).click();
+            if(!$("#tab_a_"+options.tabName).hasClass('active')) {
+                $("#tab_a_"+options.tabName).click();
+            }
         } else {
             $("#"+options.tabMainName).append('<li id="tab_li_'+options.tabName+'"><a href="#tab_content_'+options.tabName+'" data-toggle="tab" id="tab_a_'+options.tabName+'">'+options.tabTitle+'</a>&nbsp;<span class="el-icon-close"></span></li>');
 
