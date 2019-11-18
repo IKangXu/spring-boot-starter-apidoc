@@ -12,6 +12,8 @@
             dataType: dataType || 'json',
             type: 'POST',
             async: false,
+            contentType: false,    //这个一定要写
+            processData: false, //这个也一定要写，不然会报错
             headers: header || {},
             xhrFields: {
                 withCredentials: true
@@ -127,14 +129,51 @@
         });
     }
 
+    var syntaxhighlight_xml = function (xml) {
+        let xml_doc = null;
+        try {
+            xml_doc = (new DOMParser()).parseFromString(xml.replace(/[\n\r]/g, ""), 'text/xml');
+        } catch (e) {
+            return false;
+        }
+
+        function build_xml(index, list, element) {
+            let t = [];
+            for (let i = 0; i < index; i++) {
+                t.push('&nbsp;&nbsp;&nbsp;&nbsp;');
+            }
+            t = t.join("");
+            list.push(t + '&lt;<span class="code-key">' + element.nodeName + '</span>&gt;\n');
+            for (let i = 0; i < element.childNodes.length; i++) {
+                let nodeName = element.childNodes[i].nodeName;
+                if (element.childNodes[i].childNodes.length === 1) {
+                    let value = element.childNodes[i].childNodes[0].nodeValue;
+                    let value_color = !isNaN(Number(value)) ? 'code-number' : 'code-string';
+                    let value_txt = '<span class="' + value_color + '">' + value + '</span>';
+                    let item = t + '&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-key">' + nodeName +
+                        '</span>&gt;' + value_txt + '&lt;/<span class="code-key">' + nodeName + '</span>&gt;\n';
+                    list.push(item);
+                } else {
+                    build_xml(++index, list, element.childNodes[i]);
+                }
+            }
+            list.push(t + '&lt;/<span class="code-key">' + element.nodeName + '</span>&gt;\n');
+        }
+
+        let list = [];
+        build_xml(0, list, xml_doc.documentElement);
+
+        return list.join("");
+    }
+
     /**
      * 判断是否存在指定的标签页
      * @param tabMainName
      * @param tabName
      * @returns {Boolean}
      */
-    var checkTabIsExists = function(tabMainName, tabName){
-        var tab = $("#"+tabMainName+" > #tab_li_"+tabName);
+    var checkTabIsExists = function (tabMainName, tabName) {
+        var tab = $("#" + tabMainName + " > #tab_li_" + tabName);
         //console.log(tab.length)
         return tab.length > 0;
     }
@@ -143,16 +182,15 @@
      * 关闭标签页
      * @param button
      */
-    var closeTab = function(button) {
+    var closeTab = function (button) {
 
         //通过该button找到对应li标签的id
         var li_id = $(button).parent().parent().attr('id');
-        var id = li_id.replace("tab_li_","");
+        var id = li_id.replace("tab_li_", "");
 
         //如果关闭的是当前激活的TAB，激活他的前一个TAB
         $("li.active").each(function () {
-            if($(this).attr('id') == li_id)
-            {
+            if ($(this).attr('id') == li_id) {
                 $(this).prev().find("a").click();
             }
         })
@@ -165,10 +203,10 @@
         $("#tab_content_" + id).remove();
     };
 
-    var refreshTab = function(button) {
+    var refreshTab = function (button) {
         //通过该button找到对应li标签的id
         var li_id = $(button).parent().parent().attr('id');
-        var id = li_id.replace("tab_li_","");
+        var id = li_id.replace("tab_li_", "");
 
         $("#tab_content_" + id + " > iframe").attr('src', $("#tab_content_" + id + " > iframe").attr('src'));
     }
@@ -176,27 +214,27 @@
     /**
      * 增加标签页
      */
-    var addTab = function(options) {
+    var addTab = function (options) {
         //option:
         //tabMainName:tab标签页所在的容器
         //tabName:当前tab的名称
         //tabTitle:当前tab的标题
         //tabUrl:当前tab所指向的URL地址
         var exists = checkTabIsExists(options.tabMainName, options.tabName);
-        if(exists){
-            if(!$("#tab_a_"+options.tabName).hasClass('active')) {
-                $("#tab_a_"+options.tabName).click();
+        if (exists) {
+            if (!$("#tab_a_" + options.tabName).hasClass('active')) {
+                $("#tab_a_" + options.tabName).click();
             }
         } else {
-            $("#"+options.tabMainName).append('<li id="tab_li_'+options.tabName+'"><a href="#tab_content_'+options.tabName+'" data-toggle="tab" id="tab_a_'+options.tabName+'">'+options.tabTitle+'</a>&nbsp;<span class="el-icon-close"></span></li>');
+            $("#" + options.tabMainName).append('<li id="tab_li_' + options.tabName + '"><a href="#tab_content_' + options.tabName + '" data-toggle="tab" id="tab_a_' + options.tabName + '">' + options.tabTitle + '</a>&nbsp;<span class="el-icon-close"></span></li>');
 
             //固定TAB中IFRAME高度
             mainHeight = $(document.body).height() - 165;
-            $("#tab_a_"+options.tabName).click();
+            $("#tab_a_" + options.tabName).click();
         }
     }
 
-    var tabAdd = function(tabMainName,tabName,tabTitle,tabUrl) {
+    var tabAdd = function (tabMainName, tabName, tabTitle, tabUrl) {
         //option:
         //tabMainName:tab标签页所在的容器
         //tabName:当前tab的名称
@@ -221,6 +259,7 @@
             del_cookie: del_cookie
         },
         syntaxhighlight_json: syntaxhighlight_json,
+        syntaxhighlight_xml: syntaxhighlight_xml,
         tab: {
             tabAdd: tabAdd
         }

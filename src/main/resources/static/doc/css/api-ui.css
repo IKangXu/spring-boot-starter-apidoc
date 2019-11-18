@@ -42,7 +42,7 @@ cite {
     overflow: hidden;
 }
 
-.sdk-body .left {
+.sdk-body > .left {
     width: 15%;
     background: #827a7a;
     height: 100%;
@@ -59,7 +59,7 @@ cite {
     user-select: none;
 }
 
-.sdk-body .right {
+.sdk-body > .right {
     width: 85%;
     height: 100%;
     /*background: #a79494;*/
@@ -212,7 +212,7 @@ dd {
     width: 98%;
 }
 
-.content-body > div{
+.content-body > div {
     margin-bottom: 1rem;
 }
 
@@ -238,7 +238,8 @@ dd {
     font-size: .95rem;
 }
 
-.content-body div div table {
+/*.content-body div div */
+table {
     /*width: 100%;*/
     /*margin-bottom: 20px;*/
     border: 1px solid #ddd;
@@ -252,21 +253,35 @@ table thead > tr > th {
     text-align: left;
 }
 
-.content-body div div table th:not(:last-child) {
+/*.content-body div div */
+table th:not(:last-child) {
     width: 110px;
 }
 
-.content-body div div table thead > tr > th {
+/*.content-body div div */
+table thead > tr > th {
     border-bottom: none;
 }
 
-.content-body div div table > tbody > tr > td, .content-body div div table > tbody > tr > th,
-.content-body div div table > thead > tr > td, .content-body div div table > thead > tr > th {
+/*.content-body div div*/
+table > tbody > tr > td,
+    /*.content-body div div*/
+table > tbody > tr > th,
+    /*.content-body div div*/
+table > thead > tr > td,
+    /*.content-body div div */
+table > thead > tr > th {
     border: 1px solid #ddd;
 }
 
-.content-body div div table > tbody > tr > td, .content-body div div table > tbody > tr > th,
-.content-body div div table > thead > tr > td, .content-body div div table > thead > tr > th {
+/*.content-body div div*/
+table > tbody > tr > td,
+    /*.content-body div div */
+table > tbody > tr > th,
+    /*.content-body div div*/
+table > thead > tr > td,
+    /*.content-body div div */
+table > thead > tr > th {
     padding: 8px;
     line-height: 1.428571429;
     vertical-align: top;
@@ -274,7 +289,8 @@ table thead > tr > th {
     color: #000;
 }
 
-.content-body div div table > tbody > tr:nth-child(2n) {
+/*.content-body div div */
+table > tbody > tr:nth-child(2n) {
     background-color: #f6f8fa;
 }
 
@@ -470,7 +486,36 @@ pre {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
 }
 
-.i-tags .nav-tabs > li {
+.i-tags .tag-btns {
+    display: inline-block;
+}
+
+.i-tags .nav-tabs {
+    white-space: nowrap;
+    overflow-x: auto;
+    width: calc(100% - 5rem);
+    display: inline-block;
+}
+
+/*滚动条样式*/
+.i-tags .nav-tabs::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.i-tags .nav-tabs::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.i-tags .nav-tabs::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.i-tags .nav-tabs li {
     list-style: none;
     display: inline-block;
     margin: 0 3px;
@@ -483,15 +528,15 @@ pre {
     color: #ccc;
 }
 
-.i-tags .nav-tabs > li > a {
+.i-tags .nav-tabs li > a {
     color: #ccc;
 }
 
-.i-tags .nav-tabs > li.active {
+.i-tags .nav-tabs li.active {
     border-bottom: 3px solid #409eff;
 }
 
-.i-tags .nav-tabs > li.active > a, .i-tags .nav-tabs > li.active .el-icon-close {
+.i-tags .nav-tabs li.active > a, .i-tags .nav-tabs > li.active .el-icon-close {
     color: #409eff;
 }
 
@@ -545,6 +590,7 @@ pre {
 .pane-content .content {
     display: none;
     /*padding: 5px 10px;*/
+    height: 100%;
 }
 
 .pane-content .active {
@@ -567,19 +613,122 @@ pre {
     cursor: pointer;
 }
 
-.pane-icon-debuger,.pane-icon-doc{
+.pane-icon-debuger, .pane-icon-doc {
     font-size: 12px;
     cursor: pointer;
 }
+
 .pane-icon-debuger:before {
     -webkit-transform: scale(.9);
     transform: scale(.9);
     display: inline-block;
     content: "\2748";
 }
+
 .pane-icon-doc:before {
     -webkit-transform: scale(.9);
     transform: scale(.9);
     display: inline-block;
     content: "\039E";
+}
+
+.debuger-content .left {
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+.debuger-content .right {
+    width: 50%;
+    height: 100%;
+    float: right;
+}
+
+.debuger-content .right > pre {
+    border-radius: 0;
+    width: calc(100% - 40px);
+    height: calc(100% - 20px);
+    margin: 0;
+    /* padding: 0;*/
+}
+
+.debuger-content .link {
+    margin: 0 0 5px 0;
+    font-size: .95rem;
+}
+
+.debuger-content .link .method {
+    background-color: #409eff;
+    color: #fff;
+    padding: 5px 10px;
+    /* border-radius: 5px 0 0 5px; */
+    float: left;
+    margin-right: 10px;
+}
+
+.debuger-content .link .url {
+    border-bottom: 1px solid #409eff;
+    padding: 5px 10px;
+    display: block;
+}
+
+.debuger-content .link .try {
+    background-color: #409eff;
+    color: #fff;
+    padding: 5px 25px;
+    float: right;
+    cursor: pointer;
+}
+
+.debuger-content .left table, .debuger-content .left table td, .debuger-content .left table th {
+    border: 0;
+}
+
+.debuger-content .left table {
+    width: 100%;
+    font-size: .95rem;
+}
+
+.debuger-content .left table td input {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 1.5rem;
+    font-size: 0.9rem;
+    border: 0;
+    border-bottom: 1px solid #409eff;
+}
+
+.debuger-content .left table td input::-webkit-input-placeholder {
+    color: #ccc;
+    font-size: .95rem;
+}
+
+.debuger-content .left table td input:-moz-placeholder {
+    color: #ccc;
+    font-size: .95rem;
+}
+
+.debuger-content .left table td input::-moz-placeholder {
+    color: #ccc;
+    font-size: .95rem;
+}
+
+.debuger-content .left table td input:-ms-input-placeholder {
+    color: #ccc;
+    font-size: .95rem;
+}
+
+.debuger-content .left table td input::-ms-input-placeholder {
+    color: #ccc;
+    font-size: .95rem;
+}
+
+.debuger-content .left table td input::placeholder {
+    color: #ccc;
+    font-size: .95rem;
+}
+
+.debuger-content .left table > tbody > tr:nth-child(2n) input {
+    background-color: #f6f8fa;
 }

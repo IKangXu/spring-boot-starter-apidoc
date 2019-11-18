@@ -27,7 +27,7 @@
 
 ```java
     @Autowired
-    private List<RequestHandler> requestHandlers;``
+    private List<RequestHandler> requestHandlers;
 
     @Bean
     @Order(1)
@@ -84,3 +84,5 @@
 我们将程序运行起来，在浏览器中访问`http://127.0.0.1:8080/api-ui.html`
 
 ![示例图](./doc/img_01.png)
+
+![调试页面示例图](./doc/img_02.png)

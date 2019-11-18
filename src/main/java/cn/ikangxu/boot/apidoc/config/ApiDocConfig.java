@@ -5,10 +5,7 @@
 package cn.ikangxu.boot.apidoc.config;
 
 import cn.ikangxu.boot.apidoc.annotation.*;
-import cn.ikangxu.boot.apidoc.common.Documentation;
-import cn.ikangxu.boot.apidoc.common.PropertiesConst;
-import cn.ikangxu.boot.apidoc.common.RequestHandler;
-import cn.ikangxu.boot.apidoc.common.TemplateType;
+import cn.ikangxu.boot.apidoc.common.*;
 import cn.ikangxu.boot.apidoc.common.entity.*;
 import cn.ikangxu.boot.apidoc.common.test.TestEntity;
 import cn.ikangxu.boot.apidoc.util.ListUtils;
@@ -100,6 +97,8 @@ public class ApiDocConfig {
                 continue;
             }
 
+            Map<String, Tab> tabMap = new HashMap<>();
+
             for (RequestHandler handler : apis) {
 
                 ApiIgnore apiIgnore = handler.getBeanAnnotation(ApiIgnore.class);
@@ -131,16 +130,30 @@ public class ApiDocConfig {
 
                 String contextPath = ((AnnotationConfigServletWebServerApplicationContext) SpringContextUtils.applicationContext).getServletContext().getContextPath();
 
-                String url = "";
-                if (!contextPath.equals("/")) {
-                    url += contextPath;
-                }
-                url += handler.getRequestMapping().getPatternsCondition().getPatterns().toArray()[0].toString();
+                List<Object> urls = new ArrayList<>();
+                Object[] urlObjs = handler.getRequestMapping().getPatternsCondition().getPatterns().toArray();
+                for (Object urlObj : urlObjs) {
+                    String url = "";
+                    if (!contextPath.equals("/")) {
+                        url += contextPath;
+                    }
+                    url += urlObj;
 
-                String method = handler.getRequestMapping().getMethodsCondition().getMethods().toArray()[0].toString();
+                    urls.add(url);
+                }
+
+                Object[] methods = handler.getRequestMapping().getMethodsCondition().getMethods().toArray();
+                List<Object> methodObjs = new ArrayList<>();
+                if (methods.length == 0) {
+                    HttpMethod[] values = HttpMethod.values();
+                    for (HttpMethod httpMethod : values) {
+                        methodObjs.add(httpMethod.name());
+                    }
+                    methods = methodObjs.toArray();
+                }
                 Path path = new Path();
-                path.setUrl(url);
-                path.setMethod(method);
+                path.setUrl(urls.toArray());
+                path.setMethod(methods);
 
                 StringBuilder id = new StringBuilder(api.group());
                 id.append("_");
@@ -149,14 +162,13 @@ public class ApiDocConfig {
                 id.append(handler.getHandlerMethod().getMethod().getName());
                 path.setId(id.toString());
 
-                Map<String, Tab> tabMap = new HashMap<>();
-
                 ApiMethod apiMethod = handler.getAnnotation(ApiMethod.class);
                 if (null == apiMethod) {
                     tab.setPaths(new ArrayList<>());
                     tabMap.put(api.name(), tab);
                     continue;
                 }
+
 
                 path.setDescription(apiMethod.description());
                 path.setName(apiMethod.name());
@@ -180,7 +192,6 @@ public class ApiDocConfig {
 
                 path.setParameters(parameters);
 
-                // path.setProduces();
                 List<Response> responses = new ArrayList<>();
 
                 ApiResponses apiResponses = handler.getAnnotation(ApiResponses.class);
@@ -232,7 +243,10 @@ public class ApiDocConfig {
                 path.setDiscarded(apiMethod.discarded());
 
                 if (ObjectUtils.isNotEmpty(tabMap.get(tab.getName()))) {
-                    tab.getPaths().add(path);
+                    List<Path> paths = tabMap.get(tab.getName()).getPaths();
+                    paths.add(path);
+
+                    tab.setPaths(paths);
                 } else {
                     List<Path> paths = new ArrayList<>();
                     paths.add(path);
@@ -241,6 +255,7 @@ public class ApiDocConfig {
 
                 tabMap.put(api.name(), tab);
 
+                documentation.getTabs().clear();
                 documentation.getTabs().addAll(tabMap.values());
 
                 documentations.put(api.group(), documentation);

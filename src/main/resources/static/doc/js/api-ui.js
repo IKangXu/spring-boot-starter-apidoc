@@ -14,11 +14,11 @@ $(function () {
         }
     })
 
-    $('ul.nav-tabs > li').live('click', function (event) {
+    $('ul.nav-tabs  li').live('click', function (event) {
         var href = $(this).find("a").attr("href");
 
-        $('ul.nav-tabs > li').removeClass("active");
-        $('ul.nav-tabs > li').find(".el-icon-close").hide();
+        $('ul.nav-tabs  li').removeClass("active");
+        $('ul.nav-tabs  li').find(".el-icon-close").hide();
         $(this).addClass("active");
         $(this).find(".el-icon-close").show();
 
@@ -42,13 +42,13 @@ $(function () {
         }
     })
 
-    $('ul.nav-tabs > li').live('mouseover', function (event) {
+    $('ul.nav-tabs  li').live('mouseover', function (event) {
         if ($(this).hasClass('active')) {
             return;
         }
         $(this).find(".el-icon-close").show();
     })
-    $('ul.nav-tabs > li').live('mouseout', function (event) {
+    $('ul.nav-tabs  li').live('mouseout', function (event) {
         if ($(this).hasClass('active')) {
             return;
         }
@@ -56,7 +56,7 @@ $(function () {
     })
 
     // tab关闭事件
-    $('ul.nav-tabs > li > .el-icon-close').live('click', function (event) {
+    $('ul.nav-tabs  li > .el-icon-close').live('click', function (event) {
 
         var href;
         // 选中上级兄弟节点
@@ -211,7 +211,7 @@ $(function () {
     })
 
     // 初始化滚动条
-    $(".tx-fluid,.sdk-body>.left>.content>div.menu").mCustomScrollbar({
+    $(".sdk-body>.left>.content>div.menu").mCustomScrollbar({
         theme: "minimal-dark",
         scrollTo: "bottom"
     });
@@ -246,10 +246,104 @@ $(function () {
 
     }, 'json');
 
+
+    $(".debuger-content .link .try").live('click', function (event) {
+        var formData = new FormData(), headers = {}, paths = {};
+
+        var tryDataTag = $(this).attr("data-tag");
+        var id = tryDataTag.replace("try_", "");
+        $('input[i-type="data-tag"]').each(function (index, element) {
+            if ($(this).attr("data-tag") == id) {
+                let paramType = $(this).attr("param-type").toLowerCase();
+                if ($(this).attr("type") !== 'file') {
+                    if (paramType !== 'header' && paramType !== 'path') {
+                        formData.append($(this).attr("name"), $(this).val());
+                    } else if (paramType !== 'header') {
+                        headers[$(this).attr("name")] = $(this).val();
+                    } else if (paramType !== 'path') {
+                        paths[$(this).attr("name")] = $(this).val();
+                    }
+                } else {
+                    formData.append($(this).attr("name"), $(this)[0].files[0]);
+                }
+            }
+        })
+
+        var url = $(this).siblings('.url').text();
+        var method = $(this).siblings('.method').text();
+
+        // 处理path参数
+        for (var key in paths) {
+            url = url.replace(key, paths[key]);
+        }
+
+        if (method.toLowerCase() === 'get') {
+            var dataParams = "";
+            for (var [key, value] of formData.entries()) {
+                dataParams += (key + "=" + value + "&");
+            }
+            dataParams = dataParams.substring(0, dataParams.length - 1);
+            formData = dataParams;
+        }
+        var produces = "", dataType = "";
+        $("pre[i-type='data-tag']").each(function (index, element) {
+            if (id == $(this).attr("data-tag").replace("produces_", "")) {
+                produces = $(this).text();
+            }
+        })
+        if (produces.toLowerCase().indexOf("application/json") !== -1) {
+            dataType = "json";
+        } else if (produces.toLowerCase().indexOf("text/xml") !== -1 || produces.toLowerCase().indexOf("application/xml") !== -1) {
+            dataType = "xml";
+        } else if (produces.toLowerCase().indexOf("text/html") !== -1) {
+            dataType = "html";
+        } else {
+            dataType = "text";
+        }
+
+
+        $.ajax({
+            type: method,
+            url: url,
+            headers: headers,
+            async: false,
+            contentType: false,    //这个一定要写
+            processData: false, //这个也一定要写，不然会报错
+            cache: false,
+            data: formData,
+            dataType: dataType,
+            success: function (data, textStatus, request) {
+                if (dataType === 'json') {
+                    $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(util.syntaxhighlight_json(data));
+                } else {
+                    let contentType = request.getResponseHeader('content-type');
+                    if (dataType === 'xml') {
+                        $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(util.syntaxhighlight_xml(data));
+                    } else if (dataType === 'text' && (produces.toLowerCase().indexOf("image/") !== -1 || (contentType && contentType.indexOf("image/") !== -1))) {
+                        var img = "<img width='100%' src='" + url + "'>";
+                        $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(img);
+                    } else if (dataType === 'text' && (produces.toLowerCase().indexOf("video/") !== -1 || (contentType && contentType.indexOf("video/") !== -1))) {
+                        var img = "<video width='100%' src='" + url + "' controls=\"controls\">您的浏览器不支持 video 标签。</video>";
+                        $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(img);
+                    } else if (dataType === 'text' && (produces.toLowerCase().indexOf("audio/") !== -1 || (contentType && contentType.indexOf("audio/") !== -1))) {
+                        var img = "<audio width='100%' src='" + url + "' controls=\"controls\">您的浏览器不支持 audio 标签。</audio>";
+                        $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(img);
+                    } else {
+                        $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(data);
+                    }
+                }
+            },
+            error: function (data) {
+                $(".debuger-content .right > pre[data-tag='pre_" + id + "']").empty().append(util.syntaxhighlight_json(data));
+            }
+        });
+
+
+    })
 })
 
 var show_menu_fun = function (data) {
-    data = sort(data);
+    data = sort(data, 'sort');
     var _html = '';
     for (var _i in data) {
         var _class = '';
@@ -263,11 +357,13 @@ var show_menu_fun = function (data) {
             + '	</a>'
             + '	<dl>';
         if (data[_i].paths.length > 0) {
-            for (var _j in data[_i].paths) {
-                if (data[_i].paths[_j].discarded) {
-                    _html += '		<dd id="' + data[_i].paths[_j].id + '"><a title="' + data[_i].paths[_j].name + '" class="line-through" href="#' + data[_i].paths[_j].id + '">' + data[_i].paths[_j].name + '</a></dd>'
+            var paths = sort(data[_i].paths, 'id');
+
+            for (var _j in paths) {
+                if (paths[_j].discarded) {
+                    _html += '		<dd id="' + paths[_j].id + '"><a title="' + paths[_j].name + '" class="line-through" href="#' + paths[_j].id + '">' + paths[_j].name + '</a></dd>'
                 } else {
-                    _html += '		<dd id="' + data[_i].paths[_j].id + '"><a title="' + data[_i].paths[_j].name + '" href="#' + data[_i].paths[_j].id + '">' + data[_i].paths[_j].name + '</a></dd>'
+                    _html += '		<dd id="' + paths[_j].id + '"><a title="' + paths[_j].name + '" href="#' + paths[_j].id + '">' + paths[_j].name + '</a></dd>'
                 }
             }
         }
@@ -275,11 +371,11 @@ var show_menu_fun = function (data) {
             + '</li>';
     }
 
-    function sort(elements) {
+    function sort(elements, field) {
         var len = elements.length;
         for (var i = 0; i < len; i++) {
             for (var j = 0; j < len - 1 - i; j++) {
-                if (elements[j].sort > elements[j + 1].sort) {        // 相邻元素两两对比
+                if (elements[j][field] > elements[j + 1][field]) {        // 相邻元素两两对比
                     var temp = elements[j + 1];        // 元素交换
                     elements[j + 1] = elements[j];
                     elements[j] = temp;
@@ -362,7 +458,7 @@ var callback_page_html = function (data) {
                     "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
                     "\t\t\t\t\t\t<div class=\"params\">\n";
 
-                var parameters = tags[_i].paths[_j].parameters;
+                var _parameters = tags[_i].paths[_j].parameters;
                 _html += '<table>'
                     + '	<thead>'
                     + '	<tr>'
@@ -375,12 +471,12 @@ var callback_page_html = function (data) {
                     + '	</tr>'
                     + '	</thead>'
                     + '	<tbody>';
-                for (var _k = 0; _k < parameters.length; _k++) {
-                    var _parameter = parameters[_k];
+                for (var _k = 0; _k < _parameters.length; _k++) {
+                    var _parameter = _parameters[_k];
 
                     _html += '	<tr>'
                         + '		<td>' + _parameter.name + '</td>'
-                        + '		<td>' + _parameter.dataType + '</td>'
+                        + '		<td>' + (_parameter.allowMultiple ? (_parameter.dataType + '[]') : _parameter.dataType) + '</td>'
                         + '		<td>' + _parameter.paramType + '</td>'
                         + '		<td>' + (_parameter.required ? '是' : '否') + '</td>'
                         + '		<td>' + _parameter.description + '</td>'
@@ -397,18 +493,18 @@ var callback_page_html = function (data) {
                     "\t\t\t\t\t\t<div class=\"response\">\n";
 
                 var _responseExample = tags[_i].paths[_j].responseExample;
+                _html += '<table>'
+                    + '	<thead>'
+                    + '	<tr>'
+                    + '		<th>参数</th>'
+                    + '		<th>类型</th>'
+                    + '		<th>说明</th>'
+                    + '		<th>示例</th>'
+                    + '	</tr>'
+                    + '	</thead>'
+                    + '	<tbody>';
                 if (_responseExample) {
                     var _response_info = _responseExample.info;
-                    _html += '<table>'
-                        + '	<thead>'
-                        + '	<tr>'
-                        + '		<th>参数</th>'
-                        + '		<th>类型</th>'
-                        + '		<th>说明</th>'
-                        + '		<th>示例</th>'
-                        + '	</tr>'
-                        + '	</thead>'
-                        + '	<tbody>';
                     for (var _k = 0; _k < _response_info.length; _k++) {
                         _html += '	<tr>'
                             + '		<td>' + _response_info[_k].field + '</td>'
@@ -417,9 +513,9 @@ var callback_page_html = function (data) {
                             + '		<td>' + _response_info[_k].example + '</td>'
                             + '	</tr>';
                     }
-                    _html += '	</tbody>'
-                        + '</table>';
                 }
+                _html += '	</tbody>'
+                    + '</table>';
 
                 _html += "\t\t\t\t\t\t</div>\n" +
                     "\t\t\t\t\t</div>\n" +
@@ -430,6 +526,8 @@ var callback_page_html = function (data) {
                     "\t\t\t\t\t\t\t<pre id=\"success-result\">\n";
                 if (_responseExample) {
                     _html += util.syntaxhighlight_json(_responseExample.success);
+                } else {
+                    _html += "无";
                 }
                 _html += "</pre>\n" +
                     "\t\t\t\t\t\t</div>\n" +
@@ -441,6 +539,8 @@ var callback_page_html = function (data) {
                     "\t\t\t\t\t\t\t<pre id=\"fail-result\">\n";
                 if (_responseExample) {
                     _html += util.syntaxhighlight_json(_responseExample.fail);
+                } else {
+                    _html += "无";
                 }
                 _html += "</pre>\n" +
                     "\t\t\t\t\t\t</div>\n" +
@@ -449,7 +549,7 @@ var callback_page_html = function (data) {
                     "\t\t\t\t\t\t<span>响应接受类型</span>\n" +
                     "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
                     "\t\t\t\t\t\t<div class=\"produces\">\n" +
-                    "\t\t\t\t\t\t\t<pre id=\"fail-result\">\n";
+                    "\t\t\t\t\t\t\t<pre i-type='data-tag' data-tag='produces_" + tags[_i].paths[_j].id + "' id=\"fail-result\">\n";
 
                 var _produces = tags[_i].paths[_j].produces;
                 if (_produces.length > 0) {
@@ -504,7 +604,46 @@ var callback_page_html = function (data) {
                     "\t\t</div>\n";
                 if (debuger) {
                     _html += "\t\t<div class=\"content debuger debuger_" + tags[_i].paths[_j].id + "\" data-tag=\"debuger_" + tags[_i].paths[_j].id + "\">\n" +
-                        "\t\t\t我是调试页面\n" +
+                        "<div class=\"tx-fluid debuger-content\">\n" +
+                        "                        <div class=\"left\">\n" +
+                        "                            <div class=\"link\">\n" +
+                        "                                <span class='method'>" + tags[_i].paths[_j].method[0] + "</span>\n" +
+                        "                                <span class='try' data-tag='try_" + tags[_i].paths[_j].id + "'>试一试</span>\n" +
+                        "                                <span class='url'>" + tags[_i].paths[_j].url[0] + "</span>\n" +
+                        "                            </div>\n" +
+                        "                            <div>\n" +
+                        "                                <table data-tag='table_" + tags[_i].paths[_j].id + "'>\n" +
+                        "                                    <thead>\n" +
+                        "                                        <tr>\n" +
+                        "                                            <th>参数</th>\n" +
+                        "                                            <th>参数值</th>\n" +
+                        "                                            <th style='width: 4rem'>类型</th>\n" +
+                        "                                            <th style='width: 4rem'>请求类型</th>\n" +
+                        "                                            <th style='width: 4rem'>是否必须</th>\n" +
+                        "                                            <th>说明</th>\n" +
+                        "                                        </tr>\n" +
+                        "                                    </thead>\n" +
+                        "                                    <tbody>\n";
+                    for (var _k = 0; _k < _parameters.length; _k++) {
+                        var _parameter = _parameters[_k];
+
+                        _html += '	<tr>'
+                            + '		<td>' + _parameter.name + '</td>'
+                            + '		<td><input i-type="data-tag" param-type="' + _parameter.paramType + '" data-tag="' + tags[_i].paths[_j].id + '" type="' + (_parameter.dataType === 'file' ? 'file' : 'text') + '" name="' + _parameter.name + '" placeholder=\'属性值\'/></td></td>'
+                            + '		<td>' + (_parameter.allowMultiple ? (_parameter.dataType + '[]') : _parameter.dataType) + '</td>'
+                            + '		<td>' + _parameter.paramType + '</td>'
+                            + '		<td>' + (_parameter.required ? '是' : '否') + '</td>'
+                            + '		<td>' + _parameter.description + '</td>'
+                            + '	</tr>';
+                    }
+                    _html += "                                    </tbody>\n" +
+                        "                                </table>\n" +
+                        "                            </div>\n" +
+                        "                        </div>\n" +
+                        "                        <div class=\"right\">\n" +
+                        "                            <pre data-tag='pre_" + tags[_i].paths[_j].id + "'> <span style='color: #626262;'>尝试使用API​​查看结果</span> </pre>\n" +
+                        "                        </div>\n" +
+                        "                    </div>" +
                         "\t\t</div>\n";
                 }
                 _html += "\t</div>\n" +
@@ -514,7 +653,7 @@ var callback_page_html = function (data) {
     }
 
     $("#content-div").append(_html);
-    $(".tab-pane .pane-content").mCustomScrollbar({
+    $(".tab-pane .pane-content .doc").mCustomScrollbar({
         scrollButtons: {enable: true},
         theme: "minimal-dark",
         scrollbarPosition: "outside",

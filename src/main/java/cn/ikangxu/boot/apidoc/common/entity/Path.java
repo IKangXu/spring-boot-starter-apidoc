@@ -9,23 +9,22 @@ import lombok.Data;
 import java.util.List;
 
 /**
- *
- * @className Path
- * @description 
  * @author kangxu [xukang@engine3d.com]
- * @date 2019/11/11 13:15
  * @version v1.0
+ * @className Path
+ * @description
+ * @date 2019/11/11 13:15
  */
 @Data
 public class Path {
     // url
-    private String url;
+    private Object[] url;
     // 名称
     private String name;
     // 描述
     private String description;
     // 方法类型  get post 等
-    private String method;
+    private Object[] method;
     // 响应接受类型
     private Object[] produces;
     // 响应类型
