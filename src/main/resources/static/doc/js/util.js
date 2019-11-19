@@ -173,7 +173,7 @@
      * @returns {Boolean}
      */
     var checkTabIsExists = function (tabMainName, tabName) {
-        var tab = $("#" + tabMainName + " > #tab_li_" + tabName);
+        var tab = $("#" + tabMainName + " #tab_li_" + tabName);
         //console.log(tab.length)
         return tab.length > 0;
     }
@@ -226,7 +226,7 @@
                 $("#tab_a_" + options.tabName).click();
             }
         } else {
-            $("#" + options.tabMainName).append('<li id="tab_li_' + options.tabName + '"><a href="#tab_content_' + options.tabName + '" data-toggle="tab" id="tab_a_' + options.tabName + '">' + options.tabTitle + '</a>&nbsp;<span class="el-icon-close"></span></li>');
+            $("#" + options.tabMainName + ">span li:first-child").after('<li id="tab_li_' + options.tabName + '"><a href="#tab_content_' + options.tabName + '" data-toggle="tab" id="tab_a_' + options.tabName + '">' + options.tabTitle + '</a>&nbsp;<span class="el-icon-close"></span></li>');
 
             //固定TAB中IFRAME高度
             mainHeight = $(document.body).height() - 165;

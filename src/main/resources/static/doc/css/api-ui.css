@@ -353,8 +353,9 @@ p.intro {
 }
 
 .tab-content {
-    height: calc(100% - 44px);
+    height: calc(100% - 47px);
     overflow: hidden !important;
+    margin-top: 3px;
 }
 
 .tx-icon-search {
@@ -486,18 +487,105 @@ pre {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
 }
 
+.i-tags .tag-btns dl {
+    position: absolute;
+    width: 5rem;
+    right: 0;
+    text-align: center;
+    border: 1px solid #eceaea;
+    top: 43px;
+    display: none;
+    background-color: #fff;
+    z-index: 2;
+}
+
+.i-tags .tag-btns dl dd {
+    border-bottom: 1px solid #eceaea;
+    color: #706e6e;
+}
+
+.i-tags .tag-btns dl dd:hover {
+   background-color: #f5f3f3;
+}
+
 .i-tags .tag-btns {
     display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    list-style: none;
+    display: inline-block;
+    /* margin: 0 3px; */
+    height: 43px;
+    line-height: 40px;
+    font-size: 13px;
+    font-weight: 400;
+    padding-left: 15px;
+    padding-right: 10px;
+    color: #ccc;
+    float: right;
+    border-left: 1px solid #eceaea;
+    cursor: pointer;
+    position: relative;
 }
 
 .i-tags .nav-tabs {
     white-space: nowrap;
-    overflow-x: auto;
-    width: calc(100% - 5rem);
+    overflow-x: hidden;
+    width: calc(100% - 5rem - 35px);
     display: inline-block;
+    vertical-align: middle;
 }
 
-/*滚动条样式*/
+.i-tags .prev-tag {
+    height: 43px;
+    line-height: 43px;
+    font-size: 13px;
+    font-weight: 400;
+    padding-left: 10px;
+    padding-right: 5px;
+    color: #ccc;
+    /* float: right; */
+    width: 16px;
+    text-align: center;
+    border-right: 1px solid #eceaea;
+}
+
+.i-tags .next-tag {
+    height: 43px;
+    line-height: 43px;
+    font-size: 13px;
+    font-weight: 400;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #ccc;
+    /* float: right; */
+    width: 16px;
+    text-align: center;
+    border-left: 1px solid #eceaea;
+}
+
+.i-tags .prev-tag, .i-tags .next-tag {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.i-tags .prev-tag > span, .i-tags .next-tag > span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid #d8d7d6;
+    border-right: 2px solid #d8d7d6;
+}
+
+.i-tags .prev-tag > span {
+    transform: rotate(-135deg);
+}
+
+.i-tags .next-tag > span {
+    transform: rotate(45deg);
+}
+
+/*!*滚动条样式*!
 .i-tags .nav-tabs::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -513,6 +601,16 @@ pre {
     -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 0;
     background: rgba(0, 0, 0, 0.1);
+}*/
+
+.i-tags .down-arrow {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid #d8d7d6;
+    border-right: 2px solid #d8d7d6;
+    transform: rotate(135deg);
+    cursor: pointer;
 }
 
 .i-tags .nav-tabs li {
@@ -536,7 +634,7 @@ pre {
     border-bottom: 3px solid #409eff;
 }
 
-.i-tags .nav-tabs li.active > a, .i-tags .nav-tabs > li.active .el-icon-close {
+.i-tags .nav-tabs li.active > a, .i-tags .nav-tabs li.active .el-icon-close {
     color: #409eff;
 }
 

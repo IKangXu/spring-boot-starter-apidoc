@@ -1,4 +1,5 @@
 $(function () {
+    var tag_page = 1;
     var _length = $('.tx-this').length;
     if (_length > 0) {
         // $('.tx-fluid .content-body >div').addClass('display-none');
@@ -55,6 +56,80 @@ $(function () {
         $(this).find(".el-icon-close").hide();
     })
 
+    $('.tag-btns').live('mouseover', function (event) {
+        $('.tag-btns dl').show();
+    })
+    $('.tag-btns').live('mouseout', function (event) {
+        $('.tag-btns dl').hide();
+    })
+
+    $('.tag-btns .close-current').live('click', function (event) {
+        $('ul.nav-tabs li.active .el-icon-close').click();
+
+        if ($('ul.nav-tabs  li').length == 1) {
+            $('.sdk-body .left .content dd').removeClass('tx-this');
+        }
+    })
+    $('.tag-btns .close-other').live('click', function (event) {
+        $('ul.nav-tabs li').each(function (index, element) {
+            if (index == 0) {
+                return true;
+            }
+            if ($(this).hasClass('active')) {
+                return true;
+            }
+            $(this).remove();
+        })
+        $('ul.nav-tabs li.active').click();
+
+        if ($('ul.nav-tabs  li').length == 1) {
+            $('.sdk-body .left .content dd').removeClass('tx-this');
+        }
+    })
+    $('.tag-btns .close-all').live('click', function (event) {
+        $('ul.nav-tabs li').each(function (index, element) {
+            if (index == 0) {
+                return true;
+            }
+            if ($(this).hasClass('active')) {
+                return true;
+            }
+            $(this).remove();
+        })
+        $('ul.nav-tabs li.active .el-icon-close').click();
+
+        if ($('ul.nav-tabs  li').length == 1) {
+            $('.sdk-body .left .content dd').removeClass('tx-this');
+        }
+    })
+
+    $('.prev-tag').live('click', function (event) {
+        var navTabsWidth = $('.i-tags .nav-tabs').outerWidth();
+        var tabsWidth = 0;
+        $('.i-tags .nav-tabs li').each(function (index, element) {
+            tabsWidth += $(this).outerWidth();
+        })
+        var pages = Math.ceil(tabsWidth / navTabsWidth);
+        if (tag_page > 1) {
+            tag_page--;
+
+            $('.nav-tabs>span').css({'margin-left': (tag_page - 1) * navTabsWidth + 'px'})
+        }
+    })
+    $('.next-tag').live('click', function (event) {
+        var navTabsWidth = $('.i-tags .nav-tabs').outerWidth();
+        var tabsWidth = 0;
+        $('.i-tags .nav-tabs li').each(function (index, element) {
+            tabsWidth += $(this).outerWidth();
+        })
+        var pages = Math.ceil(tabsWidth / navTabsWidth);
+        if (tag_page < pages) {
+            tag_page++;
+            $('.nav-tabs>span').css({'margin-left': -((tag_page - 1) * navTabsWidth) + 'px'})
+        }
+
+    })
+
     // tab关闭事件
     $('ul.nav-tabs  li > .el-icon-close').live('click', function (event) {
 
@@ -65,10 +140,14 @@ $(function () {
             $(this).parent().prev().find(".el-icon-close").show();
 
             href = $(this).parent().prev().find("a").attr("href")
+
+            $(this).parent().prev().click();
         } else {
             $(this).parent().next().addClass('active');
             $(this).parent().next().find(".el-icon-close").show();
             href = $(this).parent().next().find("a").attr("href")
+
+            $(this).parent().next().click();
         }
 
         $(".tab-content .tab-pane").removeClass("active");
@@ -76,6 +155,10 @@ $(function () {
         $(".tab-content .tab-pane" + href).show();
 
         $(this).parent().remove();
+
+        if ($('ul.nav-tabs  li').length == 1) {
+            $('.sdk-body .left .content dd').removeClass('tx-this');
+        }
 
         // 禁止触发父级节点事件
         event = event || window.event;
@@ -402,7 +485,8 @@ var init = function () {
                         $('.sdk-body .left .content dd').each(function (index, element) {
                             $(this).removeClass('tx-this');
                         })
-                        $('#' + _id).addClass('tx-this');
+                        // $('#' + _id).addClass('tx-this');
+                        $('#' + _id).click();
                         $($('#' + _id)[0].parentElement.parentElement).addClass('tx-itemed');
                         break;
                     }
