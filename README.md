@@ -12,6 +12,7 @@
         doc:
           global:
             enabled: true
+            doamin: http://apidoc.ikangxu.cn/
           response:
             success:
               template: {"code":200,"msg":"success","data":{{DATA}}}

@@ -505,7 +505,7 @@ pre {
 }
 
 .i-tags .tag-btns dl dd:hover {
-   background-color: #f5f3f3;
+    background-color: #f5f3f3;
 }
 
 .i-tags .tag-btns {
@@ -829,4 +829,21 @@ pre {
 
 .debuger-content .left table > tbody > tr:nth-child(2n) input {
     background-color: #f6f8fa;
+}
+
+.home-content {
+    height: 100%;
+    width: 100%;
+    background: white;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 5px 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.home-content span.tip {
+    vertical-align: middle;
+    position: relative;
+    top: calc(50% - 1rem);
 }

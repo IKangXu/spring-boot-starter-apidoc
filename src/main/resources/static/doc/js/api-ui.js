@@ -530,10 +530,6 @@ var callback_page_html = function (data) {
                     "\t\t\t\t\t\t<span>API地址</span>\n" +
                     "\t\t\t\t\t\t<div class=\"headline\"></div>\n" +
                     "\t\t\t\t\t\t<div class=\"url\"><pre>\n";
-                var _obj = {
-                    method: tags[_i].paths[_j].method,
-                    url: tags[_i].paths[_j].url
-                }
                 _html += (tags[_i].paths[_j].method + "\t" + tags[_i].paths[_j].url + "");
                 _html += "</pre>\t\t\t\t\t\t</div>\n" +
                     "\t\t\t\t\t</div>\n" +

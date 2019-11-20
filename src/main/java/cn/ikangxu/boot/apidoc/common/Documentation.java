@@ -13,12 +13,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
- * @className Documentation
- * @description 
  * @author kangxu [xukang@engine3d.com]
- * @date 2019/11/11 11:19
  * @version v1.0
+ * @className Documentation
+ * @description
+ * @date 2019/11/11 11:19
  */
 @Data
 public class Documentation {
@@ -29,6 +28,10 @@ public class Documentation {
     private boolean enabled;
     // 是否可以Debug
     private boolean isDebuger;
+    // 域
+    private Object domain;
+    // 跟路径
+    private String contextPath;
 
 
     private Collection<Tab> tabs = new ArrayList<>();

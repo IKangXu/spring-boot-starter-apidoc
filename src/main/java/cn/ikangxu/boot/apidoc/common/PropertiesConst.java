@@ -6,6 +6,7 @@ package cn.ikangxu.boot.apidoc.common;
 
 import cn.ikangxu.boot.apidoc.util.ObjectUtils;
 import cn.ikangxu.boot.apidoc.util.SpringContextUtils;
+import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,6 +26,7 @@ public class PropertiesConst {
 
     // 全局启用参数
     public static Object GLOBAL_ENABLED = SpringContextUtils.getProperty("cn.ikangxu.doc.global.enabled");
+    public static Object DOMAIN = SpringContextUtils.getProperty("cn.ikangxu.doc.global.domain");
 
     static {
         if (!ObjectUtils.isNotEmpty(RESPONSE_TEMPLATE_SUCCESS_TEMPLATE)) {
@@ -41,6 +43,9 @@ public class PropertiesConst {
         }
         if (!ObjectUtils.isNotEmpty(GLOBAL_ENABLED)) {
             GLOBAL_ENABLED = true;
+        }
+        if (!ObjectUtils.isNotEmpty(DOMAIN)) {
+            DOMAIN = "";
         }
     }
 

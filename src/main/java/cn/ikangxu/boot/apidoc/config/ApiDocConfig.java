@@ -122,6 +122,7 @@ public class ApiDocConfig {
                 documentation.setGroupName(api.group());
                 documentation.setEnabled(docket.isEnabled());
                 documentation.setDebuger(docket.isDebuger());
+                documentation.setDomain(PropertiesConst.DOMAIN);
 
                 Tab tab = new Tab();
                 tab.setName(api.name());
@@ -129,15 +130,24 @@ public class ApiDocConfig {
                 tab.setDescription(api.description());
 
                 String contextPath = ((AnnotationConfigServletWebServerApplicationContext) SpringContextUtils.applicationContext).getServletContext().getContextPath();
+                documentation.setContextPath(contextPath);
 
                 List<Object> urls = new ArrayList<>();
                 Object[] urlObjs = handler.getRequestMapping().getPatternsCondition().getPatterns().toArray();
+
+                Object domain = documentation.getDomain();
+                if (domain.toString().endsWith("/") || domain.toString().endsWith("\\")) {
+                    domain = domain.toString().substring(0, domain.toString().length() - 1);
+                }
+
                 for (Object urlObj : urlObjs) {
                     String url = "";
                     if (!contextPath.equals("/")) {
                         url += contextPath;
                     }
                     url += urlObj;
+
+                    url = (domain + url);
 
                     urls.add(url);
                 }
